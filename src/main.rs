@@ -1,5 +1,4 @@
 use chrono::{DateTime, Utc};
-use colored::Colorize;
 use dirs;
 use serde::{Deserialize, Serialize};
 use serde_json;
@@ -9,11 +8,14 @@ use std::fs;
 use std::fs::File;
 use std::io::{self, BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
+use termion::color;
+use termion::screen::AlternateScreen;
 
 enum Command {
     Continue(usize),
     Pop(usize),
     PopLast,
+    List,
     // Edit(usize),
 }
 
@@ -30,6 +32,7 @@ impl<'a> Command {
             Some("p") | Some("pop") => Some(statement.next().map_or(Self::PopLast, |arg| {
                 Self::Pop(arg.parse().expect("invalid argument"))
             })),
+            Some("l") | Some("list") => Some(Command::List),
             _ => None,
         }
     }
@@ -43,7 +46,7 @@ struct Task {
 
 impl PartialEq for Task {
     fn eq(&self, other: &Task) -> bool {
-        self.name == other.name
+        self.name.trim() == other.name.trim()
     }
 }
 
@@ -58,7 +61,7 @@ impl Task {
 
 impl fmt::Display for Task {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.name.cyan().bold())
+        write!(f, "{}", self.name)
     }
 }
 
@@ -99,13 +102,30 @@ impl Mind {
             Command::PopLast => {
                 self.pop();
             }
+            Command::List => {
+                print!("{}", self);
+            }
         }
     }
+}
 
-    fn list(&self) {
-        self.tasks.iter().zip(0..).for_each(|(task, idx)| {
-            println!("[{}] {}", idx, &task);
-        });
+impl fmt::Display for Mind {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut color = 155 as u8;
+        let len = self.tasks.len();
+
+        for (task, idx) in self.tasks.iter().zip(0..) {
+            writeln!(
+                f,
+                "[{}] {}{}{}",
+                idx,
+                color::Fg(color::Rgb(color - 70, color - 30, color)),
+                &task.name,
+                color::Fg(color::Reset)
+            )?;
+            color += 100 as u8 / len as u8;
+        }
+        Ok(())
     }
 }
 
@@ -127,14 +147,14 @@ impl LocalStorage {
             fs::create_dir(&local_storage)?;
         };
 
-        let stack_file_path = local_storage.join(Path::new("stack.json"));
-        if !stack_file_path.exists() {
-            let file = File::create(&stack_file_path)?;
+        let mind_file_path = local_storage.join(Path::new("mind.json"));
+        if !mind_file_path.exists() {
+            let file = File::create(&mind_file_path)?;
             serde_json::to_writer(&file, &Mind::default()).unwrap();
         };
 
         Ok(Self {
-            path: stack_file_path,
+            path: mind_file_path,
         })
     }
 }
@@ -151,24 +171,25 @@ impl Storage for LocalStorage {
 }
 
 fn main() -> io::Result<()> {
-    let mut stdout = std::io::stdout();
-    let stdin = io::stdin();
     let storage = LocalStorage::init()?;
     let mut mind = storage.load()?;
-    let mut handle = stdin.lock();
     let args: Vec<String> = env::args().skip(1).collect();
 
     if args.len() > 0 {
         if let Some(command) = Command::from(args.iter().map(|x| x.trim())) {
             mind.act(command);
-            mind.list();
         } else {
             eprintln!("error: invalid sub command: {}", args.get(0).unwrap());
             std::process::exit(1);
         }
     } else {
         loop {
-            mind.list();
+            let stdout = std::io::stdout();
+            let mut stdout = AlternateScreen::from(stdout);
+            let stdin = io::stdin();
+            let mut handle = stdin.lock();
+
+            print!("{}", &mind);
             print!("[{}] ", mind.tasks.len());
             stdout.flush()?;
 

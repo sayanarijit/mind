@@ -1,15 +1,16 @@
 Productive mind
 ===============
 
-A productive can mind push and pop tasks into it's stack efficiently
-----------------------------------------------------------------
+A productive mind can push and pop tasks into it's stack efficiently
+--------------------------------------------------------------------
 
-Push a task into the mind stack (or continue with an existing task)
+Push tasks into the mind stack (or continue with an existing task)
 
 ```bash
 mind
 
-# Enter a name for the task to push
+# Enter the names for the tasks to push.
+# Press [ENTER] again to save the added tasks.
 ```
 
 Pop the current task from the mind stack
@@ -18,4 +19,5 @@ Pop the current task from the mind stack
 mind pop
 ```
 
-I'll keep adding features (small or big) and keep improving the code quality while I learn more cool ways to be productive.
+I'll keep adding features (small or big) and keep improving the code quality
+while I learn more cool ways to be productive and become better developer.

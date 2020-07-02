@@ -35,22 +35,36 @@ Supported commands in both CLI and interactive mode
 
 | Command                             | Aliases             | Action
 |-------------------------------------|---------------------|------------------------------------------
+| `{int}`                             |                     | Continue with task at the given position
 | `pop`                               | `p`                 | Pop out the current task
-| `pop {int1}`                        | `p {int}`           | Pop out the task at the given position
-| `continue {int}`                    | `c {int}`           | Continue with task at the given position
+| `pop {int}`                         | `p {int}`           | Pop out the task at the given position
 
 Example 1: Continue with the task positioned at `[3]`
 
 * CLI mode
 
 ```bash
-mind c 3
+mind 3
 ```
 
 * Interactive mode
 
 ```bash
-/c 3
+/3
+```
+
+Example 2: Pop the task positioned at `[3]`
+
+* CLI mode
+
+```bash
+mind p 3
+```
+
+* Interactive mode
+
+```bash
+/p 3
 ```
 
 I'll keep adding features (small or big) and keep improving the code quality

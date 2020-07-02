@@ -21,16 +21,10 @@ enum Command {
 impl<'a> Command {
     fn from<I: Iterator<Item = &'a str>>(mut statement: I) -> Option<Self> {
         match statement.next() {
-            Some("c") | Some("continue") => Some(Self::Continue(
-                statement
-                    .next()
-                    .expect("missing argument")
-                    .parse()
-                    .expect("invalid argument"),
-            )),
             Some("p") | Some("pop") => Some(statement.next().map_or(Self::PopLast, |arg| {
                 Self::Pop(arg.parse().expect("invalid argument"))
             })),
+            Some(num) => Some(Self::Continue(num.parse().expect("invalid argument"))),
             _ => None,
         }
     }
@@ -204,9 +198,7 @@ fn main() -> io::Result<()> {
                     .next()
                     .expect("missing command")
                     .split(' ');
-                if let Some(command) = Command::from(statement) {
-                    mind.act(command)
-                }
+                mind.act(Command::from(statement).expect("missing command"));
             } else {
                 mind.push(input);
             }

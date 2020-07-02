@@ -122,7 +122,7 @@ checksum = "9457b06509d27052635f90d6466700c65095fdf75409b3fbdd903e988b886f49"
 
 [[package]]
 name = "mind"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "chrono",
  "dirs",

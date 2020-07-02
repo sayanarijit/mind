@@ -35,7 +35,6 @@ Supported commands in both CLI and interactive mode
 
 | Command                             | Aliases             | Action
 |-------------------------------------|---------------------|------------------------------------------
-| `list`                              | `l`                 | List the tasks.
 | `pop`                               | `p`                 | Pop out the current task
 | `pop {int1}`                        | `p {int}`           | Pop out the task at the given position
 | `continue {int}`                    | `c {int}`           | Continue with task at the given position

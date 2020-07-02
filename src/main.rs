@@ -15,7 +15,6 @@ enum Command {
     Continue(usize),
     Pop(usize),
     PopLast,
-    List,
     // Edit(usize),
 }
 
@@ -32,7 +31,6 @@ impl<'a> Command {
             Some("p") | Some("pop") => Some(statement.next().map_or(Self::PopLast, |arg| {
                 Self::Pop(arg.parse().expect("invalid argument"))
             })),
-            Some("l") | Some("list") => Some(Command::List),
             _ => None,
         }
     }
@@ -101,9 +99,6 @@ impl Mind {
             }
             Command::PopLast => {
                 self.pop();
-            }
-            Command::List => {
-                print!("{}", self);
             }
         }
     }
@@ -218,6 +213,7 @@ fn main() -> io::Result<()> {
         }
     }
 
+    print!("{}", &mind);
     storage.save(mind)?;
 
     Ok(())

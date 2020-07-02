@@ -1,4 +1,5 @@
 use chrono::{DateTime, Utc};
+use chrono_humanize::HumanTime;
 use dirs;
 use serde::{Deserialize, Serialize};
 use serde_json;
@@ -36,24 +37,12 @@ struct Task {
     name: String,
 }
 
-impl PartialEq for Task {
-    fn eq(&self, other: &Task) -> bool {
-        self.name.trim() == other.name.trim()
-    }
-}
-
 impl Task {
     fn new(name: String) -> Self {
         Self {
             name,
             start: Utc::now(),
         }
-    }
-}
-
-impl fmt::Display for Task {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.name)
     }
 }
 
@@ -103,14 +92,20 @@ impl fmt::Display for Mind {
         let mut color = 155 as u8;
         let len = self.tasks.len();
 
+        let width = self.tasks.iter().map(|t| t.name.chars().count()).max().unwrap_or(0);
+
         for (task, idx) in self.tasks.iter().zip(0..) {
             writeln!(
                 f,
-                "[{}] {}{}{}",
+                "[{}] {}{:width$}{}\t{}{}{}",
                 idx,
                 color::Fg(color::Rgb(color - 70, color - 30, color)),
                 &task.name,
-                color::Fg(color::Reset)
+                color::Fg(color::Reset),
+                color::Fg(color::Rgb(color - 50, color - 50, color - 50)),
+                &HumanTime::from(task.start - Utc::now()),
+                color::Fg(color::Reset),
+                width = width
             )?;
             color += 100 as u8 / len as u8;
         }

@@ -10,6 +10,31 @@ use std::fs::File;
 use std::io::{self, BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
 
+enum Command {
+    Continue(usize),
+    Pop(usize),
+    PopLast,
+    // Edit(usize),
+}
+
+impl<'a> Command {
+    fn from<I: Iterator<Item = &'a str>>(mut statement: I) -> Option<Self> {
+        match statement.next() {
+            Some("c") | Some("continue") => Some(Self::Continue(
+                statement
+                    .next()
+                    .expect("missing argument")
+                    .parse()
+                    .expect("invalid argument"),
+            )),
+            Some("p") | Some("pop") => Some(statement.next().map_or(Self::PopLast, |arg| {
+                Self::Pop(arg.parse().expect("invalid argument"))
+            })),
+            _ => None,
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize)]
 struct Task {
     start: DateTime<Utc>,
@@ -33,7 +58,7 @@ impl Task {
 
 impl fmt::Display for Task {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "⦿  {}", self.name.cyan().bold())
+        write!(f, "{}", self.name.cyan().bold())
     }
 }
 
@@ -44,17 +69,49 @@ struct Mind {
 }
 
 impl Mind {
-    fn push(&mut self, task: Task) {
-        self.tasks.push(task)
+    fn push(&mut self, name: &str) {
+        if let Some((_task, idx)) = self
+            .tasks
+            .iter()
+            .zip(0..)
+            .filter(|(task, _idx)| task.name.trim() == name)
+            .next()
+        {
+            let task = self.tasks.remove(idx);
+            self.tasks.push(task);
+        } else {
+            self.tasks.push(Task::new(name.to_string()));
+        }
     }
     fn pop(&mut self) -> Option<Task> {
         self.tasks.pop()
+    }
+
+    fn act(&mut self, command: Command) {
+        match command {
+            Command::Continue(index) => {
+                let task = self.tasks.remove(index);
+                self.tasks.push(task);
+            }
+            Command::Pop(index) => {
+                self.tasks.remove(index);
+            }
+            Command::PopLast => {
+                self.pop();
+            }
+        }
+    }
+
+    fn list(&self) {
+        self.tasks.iter().zip(0..).for_each(|(task, idx)| {
+            println!("[{}] {}", idx, &task);
+        });
     }
 }
 
 trait Storage {
     fn load(&self) -> io::Result<Mind>;
-    fn save(&self, stack: Mind) -> io::Result<()>;
+    fn save(&self, mind: Mind) -> io::Result<()>;
 }
 
 struct LocalStorage {
@@ -84,11 +141,11 @@ impl LocalStorage {
 
 impl Storage for LocalStorage {
     fn load(&self) -> io::Result<Mind> {
-        let stack: Mind = serde_json::from_reader(BufReader::new(&File::open(&self.path)?))?;
-        return Ok(stack);
+        let mind: Mind = serde_json::from_reader(BufReader::new(&File::open(&self.path)?))?;
+        return Ok(mind);
     }
-    fn save(&self, stack: Mind) -> io::Result<()> {
-        serde_json::to_writer(File::create(&self.path)?, &stack).expect("failed to save file.");
+    fn save(&self, mind: Mind) -> io::Result<()> {
+        serde_json::to_writer(File::create(&self.path)?, &mind).expect("failed to save file.");
         Ok(())
     }
 }
@@ -97,62 +154,50 @@ fn main() -> io::Result<()> {
     let mut stdout = std::io::stdout();
     let stdin = io::stdin();
     let storage = LocalStorage::init()?;
-    let mut stack = storage.load()?;
+    let mut mind = storage.load()?;
     let mut handle = stdin.lock();
-    let mut read_input = false;
-    let mut args = env::args();
+    let args: Vec<String> = env::args().skip(1).collect();
 
-    args.next();
-
-    let maybe_sub = args.next();
-    match maybe_sub {
-        Some(sub) => match sub.trim() {
-            "pop" => {
-                stack.pop();
-            }
-            _ => {
-                eprintln!("invalid sub command: {}", sub);
-            }
-        },
-        None => {
-            read_input = true;
+    if args.len() > 0 {
+        if let Some(command) = Command::from(args.iter().map(|x| x.trim())) {
+            mind.act(command);
+            mind.list();
+        } else {
+            eprintln!("error: invalid sub command: {}", args.get(0).unwrap());
+            std::process::exit(1);
         }
-    }
-
-    stack.tasks.iter().for_each(|task| {
-        println!("{}", &task);
-    });
-
-    if read_input {
+    } else {
         loop {
-            let mut buffer = String::new();
-
-            print!("⦿  ");
+            mind.list();
+            print!("[{}] ", mind.tasks.len());
             stdout.flush()?;
 
+            let mut buffer = String::new();
             handle.read_line(&mut buffer)?;
 
-            if buffer.trim().chars().count() == 0 {
+            let input = buffer.trim();
+
+            if input.chars().count() == 0 {
                 break;
             }
 
-            let len = stack.tasks.len();
-
-            if let Some((_task, idx)) = stack
-                .tasks
-                .iter()
-                .zip(0..)
-                .filter(|(task, _idx)| task.name.trim() == buffer.trim())
-                .next()
-            {
-                stack.tasks.swap(idx, len - 1);
+            if input.chars().next() == Some('/') {
+                let statement = input
+                    .splitn(2, '/')
+                    .skip(1)
+                    .next()
+                    .expect("missing command")
+                    .split(' ');
+                if let Some(command) = Command::from(statement) {
+                    mind.act(command)
+                }
             } else {
-                stack.push(Task::new(buffer.trim().to_string()));
+                mind.push(input);
             }
         }
     }
 
-    storage.save(stack)?;
+    storage.save(mind)?;
 
     Ok(())
 }

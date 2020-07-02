@@ -17,6 +17,40 @@ Pop the current task from the mind stack
 
 ```bash
 mind pop
+
+# Alias
+mind p
+```
+
+Or while in interactive mode
+
+```bash
+/pop
+
+# Alias
+/p
+```
+
+Supported commands in both CLI and interactive mode
+
+| Command                             | Aliases             | Action
+|-------------------------------------|---------------------|------------------------------------------
+| `pop`                               | `p`                 | Pop out the current task
+| `pop {int1}`                        | `p {int}`           | Pop out the task at the given position
+| `continue {int}`                    | `c {int}`           | Continue with task at the given position
+
+Example 1: Continue with the task positioned at `[3]`
+
+* CLI mode
+
+```bash
+mind c 3
+```
+
+* Interactive mode
+
+```bash
+/c 3
 ```
 
 I'll keep adding features (small or big) and keep improving the code quality

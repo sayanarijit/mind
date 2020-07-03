@@ -1,5 +1,7 @@
-Productive mind
-===============
+A Productive Mind
+=================
+
+[![Crates.io](https://img.shields.io/crates/v/mind.svg)](https://crates.io/crates/mind)
 
 A productive mind can push and pop tasks into it's stack efficiently
 --------------------------------------------------------------------
@@ -92,10 +94,6 @@ reminders:
       Weekly:
         - Sat
         - Sun
-
-  - name: Test reminder every year
-    when: "2020-07-10T23:09:42.233022+05:30"
-    repeat: EveryYear
 ```
 
 I'll keep adding features (small or big) and keep improving the code quality

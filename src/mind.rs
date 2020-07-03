@@ -47,7 +47,7 @@ impl Mind {
             }
             self.push(reminder.name().clone());
 
-            if let Some(next) = match reminder.repeat().clone() {
+            let next = match reminder.repeat().clone() {
                 Repeat::Never => None,
                 Repeat::EveryDay => Some(*reminder.when() + Duration::days(1)),
                 Repeat::EveryWeek => Some(*reminder.when() + Duration::days(7)),
@@ -63,10 +63,12 @@ impl Mind {
 
                     Some(*reminder.when() + Duration::days(days))
                 }
-            } {
+            };
+
+            if let Some(next_reminder) = next {
                 new_reminders.push(Reminder::new(
                     reminder.name().clone(),
-                    next,
+                    next_reminder,
                     reminder.repeat().clone(),
                 ));
             }

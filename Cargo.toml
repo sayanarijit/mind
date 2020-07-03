@@ -1,9 +1,9 @@
 [package]
 name = "mind"
-version = "0.1.8"
+version = "0.1.9"
 authors = ["Arijit Basu <sayanarijit@gmail.com>"]
 edition = "2018"
-description = "Productive mind"
+description = "A Productive Mind"
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/sayanarijit/mind"
@@ -18,3 +18,4 @@ serde_yaml = "0.8"
 dirs = "3.0"
 termion = "1.5"
 chrono-humanize = "0.0.11"
+clap = "2.33.1"

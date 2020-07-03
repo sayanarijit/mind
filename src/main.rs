@@ -1,3 +1,4 @@
+use clap::{crate_authors, crate_version, App, Arg, SubCommand};
 use mind::storage::local::LocalStorage;
 use mind::{Command, Storage};
 use std::env;
@@ -7,9 +8,27 @@ use termion::screen::AlternateScreen;
 fn main() -> io::Result<()> {
     let storage = LocalStorage::init()?;
     let mut mind = storage.load()?;
-    let args: Vec<String> = env::args().skip(1).collect();
-
     mind.remind_tasks();
+
+    // TODO: Find a suitable CLI parser.
+    App::new("mind")
+        .version(crate_version!())
+        .author(crate_authors!())
+        .about("A Productive Mind")
+        .subcommand(
+            SubCommand::with_name("pop")
+                .help("pop the current task out of the mind")
+                .alias("p")
+                .arg(
+                    Arg::with_name("index")
+                        .help("pop the task at the given position out of the mind")
+                        .index(1)
+                        .required(false),
+                ),
+        )
+        .get_matches();
+
+    let args: Vec<String> = env::args().skip(1).collect();
     if args.len() > 0 {
         if let Some(command) = Command::from(args.iter().map(|x| x.trim())) {
             mind.act(command);

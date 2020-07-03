@@ -76,20 +76,20 @@ Open `~/.mind/mind.yml` and add the reminders in the given format
 
 ```yaml
 reminders:
-  - name: Test reminder once
-    when: "2020-07-10T23:09:42.233022+05:30"
+  - name: Test reminder once on 10 July 2020, at 8 am IST
+    when: "2020-07-10T08:00:00+05:30"
     repeat: Never
 
-  - name: Test reminder everyday
-    when: "2020-07-04T23:10:42.233022+05:30"
+  - name: "Test reminder everyday at 10:30 pm IST"
+    when: "2020-07-04T22:30:00+05:30"
     repeat: EveryDay
 
-  - name: Test reminder every week
-    when: "2020-07-10T23:09:42.233022+05:30"
+  - name: Test reminder every week at 11 am IST
+    when: "2020-07-10T11:00:00+05:30"
     repeat: EveryWeek
   
-  - name: Test reminder every saturday and sunday
-    when: "2020-07-11T00:08:00.233022+05:30"
+  - name: "Test reminder every saturday and sunday at 9:15 am IST"
+    when: "2020-07-10T09:15:00+05:30"
     repeat:
       Weekly:
         - Sat

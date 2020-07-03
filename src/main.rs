@@ -1,158 +1,8 @@
-use chrono::{DateTime, Utc};
-use chrono_humanize::HumanTime;
-use dirs;
-use serde::{Deserialize, Serialize};
-use serde_json;
+use mind::storage::local::LocalStorage;
+use mind::{Command, Storage};
 use std::env;
-use std::fmt;
-use std::fs;
-use std::fs::File;
-use std::io::{self, BufRead, BufReader, Write};
-use std::path::{Path, PathBuf};
-use termion::color;
+use std::io::{self, BufRead, Write};
 use termion::screen::AlternateScreen;
-
-enum Command {
-    Continue(usize),
-    Pop(usize),
-    PopLast,
-    // Edit(usize),
-}
-
-impl<'a> Command {
-    fn from<I: Iterator<Item = &'a str>>(mut statement: I) -> Option<Self> {
-        match statement.next() {
-            Some("p") | Some("pop") => Some(statement.next().map_or(Self::PopLast, |arg| {
-                Self::Pop(arg.parse().expect("invalid argument"))
-            })),
-            Some(num) => Some(Self::Continue(num.parse().expect("invalid argument"))),
-            _ => None,
-        }
-    }
-}
-
-#[derive(Serialize, Deserialize)]
-struct Task {
-    start: DateTime<Utc>,
-    name: String,
-}
-
-impl Task {
-    fn new(name: String) -> Self {
-        Self {
-            name,
-            start: Utc::now(),
-        }
-    }
-}
-
-#[derive(Default, Serialize, Deserialize)]
-struct Mind {
-    #[serde(default)]
-    tasks: Vec<Task>,
-}
-
-impl Mind {
-    fn push(&mut self, name: &str) {
-        if let Some((_task, idx)) = self
-            .tasks
-            .iter()
-            .zip(0..)
-            .filter(|(task, _idx)| task.name.trim() == name)
-            .next()
-        {
-            let task = self.tasks.remove(idx);
-            self.tasks.push(task);
-        } else {
-            self.tasks.push(Task::new(name.to_string()));
-        }
-    }
-    fn pop(&mut self) -> Option<Task> {
-        self.tasks.pop()
-    }
-
-    fn act(&mut self, command: Command) {
-        match command {
-            Command::Continue(index) => {
-                let task = self.tasks.remove(index);
-                self.tasks.push(task);
-            }
-            Command::Pop(index) => {
-                self.tasks.remove(index);
-            }
-            Command::PopLast => {
-                self.pop();
-            }
-        }
-    }
-}
-
-impl fmt::Display for Mind {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut color = 155 as u8;
-        let len = self.tasks.len();
-
-        let width = self.tasks.iter().map(|t| t.name.chars().count()).max().unwrap_or(0);
-
-        for (task, idx) in self.tasks.iter().zip(0..) {
-            writeln!(
-                f,
-                "[{}] {}{:width$}{}\t{}{}{}",
-                idx,
-                color::Fg(color::Rgb(color - 70, color - 30, color)),
-                &task.name,
-                color::Fg(color::Reset),
-                color::Fg(color::Rgb(color - 50, color - 50, color - 50)),
-                &HumanTime::from(task.start - Utc::now()),
-                color::Fg(color::Reset),
-                width = width
-            )?;
-            color += 100 as u8 / len as u8;
-        }
-        Ok(())
-    }
-}
-
-trait Storage {
-    fn load(&self) -> io::Result<Mind>;
-    fn save(&self, mind: Mind) -> io::Result<()>;
-}
-
-struct LocalStorage {
-    path: PathBuf,
-}
-
-impl LocalStorage {
-    fn init() -> io::Result<Self> {
-        let local_storage = dirs::home_dir()
-            .expect("failed go get home directory")
-            .join(Path::new(".mind"));
-        if !local_storage.exists() {
-            fs::create_dir(&local_storage)?;
-        };
-
-        let mind_file_path = local_storage.join(Path::new("mind.json"));
-        if !mind_file_path.exists() {
-            let file = File::create(&mind_file_path)?;
-            serde_json::to_writer(&file, &Mind::default()).unwrap();
-        };
-
-        Ok(Self {
-            path: mind_file_path,
-        })
-    }
-}
-
-impl Storage for LocalStorage {
-    fn load(&self) -> io::Result<Mind> {
-        let mind: Mind = serde_json::from_reader(BufReader::new(&File::open(&self.path)?))?;
-        return Ok(mind);
-    }
-    fn save(&self, mind: Mind) -> io::Result<()> {
-        serde_json::to_writer(File::create(&self.path)?, &mind).expect("failed to save file.");
-        Ok(())
-    }
-}
 
 fn main() -> io::Result<()> {
     let storage = LocalStorage::init()?;
@@ -174,7 +24,7 @@ fn main() -> io::Result<()> {
             let mut handle = stdin.lock();
 
             print!("{}", &mind);
-            print!("[{}] ", mind.tasks.len());
+            print!("[{}] ", mind.tasks().len());
             stdout.flush()?;
 
             let mut buffer = String::new();
@@ -195,7 +45,7 @@ fn main() -> io::Result<()> {
                     .split(' ');
                 mind.act(Command::from(statement).expect("missing command"));
             } else {
-                mind.push(input);
+                mind.act(Command::Push(input.into()));
             }
         }
     }

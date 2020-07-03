@@ -1,6 +1,6 @@
 [package]
 name = "mind"
-version = "0.1.10"
+version = "0.1.11"
 authors = ["Arijit Basu <sayanarijit@gmail.com>"]
 edition = "2018"
 description = "A Productive Mind"
@@ -18,4 +18,3 @@ serde_yaml = "0.8"
 dirs = "3.0"
 termion = "1.5"
 chrono-humanize = "0.0.11"
-clap = "2.33.1"

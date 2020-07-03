@@ -1,6 +1,6 @@
 use crate::{Mind, Storage};
 use dirs;
-use serde_json;
+use serde_yaml;
 use std::fs;
 use std::fs::File;
 use std::io::{self, BufReader};
@@ -19,10 +19,10 @@ impl Storage for LocalStorage {
             fs::create_dir(&local_storage)?;
         };
 
-        let mind_file_path = local_storage.join(Path::new("mind.json"));
+        let mind_file_path = local_storage.join(Path::new("mind.yml"));
         if !mind_file_path.exists() {
             let file = File::create(&mind_file_path)?;
-            serde_json::to_writer(&file, &Mind::default()).unwrap();
+            serde_yaml::to_writer(&file, &Mind::default()).unwrap();
         };
 
         Ok(Self {
@@ -31,11 +31,11 @@ impl Storage for LocalStorage {
     }
 
     fn load(&self) -> io::Result<Mind> {
-        let mind: Mind = serde_json::from_reader(BufReader::new(&File::open(&self.path)?))?;
+        let mind: Mind = serde_yaml::from_reader(BufReader::new(&File::open(&self.path)?)).expect("invalid format");
         return Ok(mind);
     }
     fn save(&self, mind: Mind) -> io::Result<()> {
-        serde_json::to_writer(File::create(&self.path)?, &mind).expect("failed to save file.");
+        serde_yaml::to_writer(File::create(&self.path)?, &mind).expect("failed to save file.");
         Ok(())
     }
 }

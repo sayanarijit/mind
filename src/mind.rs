@@ -1,5 +1,5 @@
-use crate::{Command, Task};
-use chrono::Utc;
+use crate::{Command, Reminder, Repeat, Task};
+use chrono::{Datelike, Duration, Local};
 use chrono_humanize::HumanTime;
 use serde::{Deserialize, Serialize};
 use std::fmt;
@@ -7,6 +7,8 @@ use termion::color;
 
 #[derive(Default, Serialize, Deserialize)]
 pub struct Mind {
+    #[serde(default)]
+    reminders: Vec<Reminder>,
     #[serde(default)]
     tasks: Vec<Task>,
 }
@@ -32,6 +34,44 @@ impl Mind {
 
     pub fn tasks(&self) -> &Vec<Task> {
         &self.tasks
+    }
+
+    pub fn remind_tasks(&mut self) {
+        let now = Local::now();
+        let mut new_reminders: Vec<Reminder> = Vec::new();
+
+        for reminder in self.reminders.clone() {
+            if reminder.when() > &now {
+                new_reminders.push(reminder);
+                continue;
+            }
+            self.push(reminder.name().clone());
+
+            if let Some(next) = match reminder.repeat().clone() {
+                Repeat::Never => None,
+                Repeat::EveryDay => Some(*reminder.when() + Duration::days(1)),
+                Repeat::EveryWeek => Some(*reminder.when() + Duration::days(7)),
+                Repeat::Weekly(weekdays) => {
+                    let mut weekday = reminder.when().naive_local().weekday().succ();
+
+                    let mut days = 1;
+
+                    while !weekdays.contains(&weekday) {
+                        weekday = weekday.succ();
+                        days += 1;
+                    }
+
+                    Some(*reminder.when() + Duration::days(days))
+                }
+            } {
+                new_reminders.push(Reminder::new(
+                    reminder.name().clone(),
+                    next,
+                    reminder.repeat().clone(),
+                ));
+            }
+        }
+        self.reminders = new_reminders;
     }
 
     pub fn act(&mut self, command: Command) {
@@ -64,7 +104,7 @@ impl fmt::Display for Mind {
             .map(|t| t.name().chars().count())
             .max()
             .unwrap_or(0);
-        let now = Utc::now();
+        let now = Local::now();
 
         for (task, idx) in self.tasks.iter().zip(0..) {
             writeln!(

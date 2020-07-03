@@ -1,6 +1,6 @@
 [package]
 name = "mind"
-version = "0.1.7"
+version = "0.1.8"
 authors = ["Arijit Basu <sayanarijit@gmail.com>"]
 edition = "2018"
 description = "Productive mind"
@@ -14,7 +14,7 @@ repository = "https://github.com/sayanarijit/mind"
 [dependencies]
 chrono = { version = "0.4", features = ["serde"] }
 serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
+serde_yaml = "0.8"
 dirs = "3.0"
 termion = "1.5"
 chrono-humanize = "0.0.11"

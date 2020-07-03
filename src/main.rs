@@ -9,6 +9,7 @@ fn main() -> io::Result<()> {
     let mut mind = storage.load()?;
     let args: Vec<String> = env::args().skip(1).collect();
 
+    mind.remind_tasks();
     if args.len() > 0 {
         if let Some(command) = Command::from(args.iter().map(|x| x.trim())) {
             mind.act(command);

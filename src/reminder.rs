@@ -9,7 +9,6 @@ pub static REMINDER_EXAMPLES: &str = r###"
   repeat: Never
 
 # The following reminders will reschedule themselves.
-# And Will keep re-scheduling for all the reminders you've missed.
 
 - name: "Test reminder everyday at 10:30 pm IST"
   when: "2020-07-10T10:30:00+05:30"

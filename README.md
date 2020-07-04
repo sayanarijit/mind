@@ -76,24 +76,47 @@ Open `~/.mind/mind.yml` and add the reminders in the given format
 
 ```yaml
 reminders:
+
+  # This reminder will disappear once executed.
+
   - name: Test reminder once on 10 July 2020, at 8 am IST
     when: "2020-07-10T08:00:00+05:30"
     repeat: Never
 
+  # Following reminders will reschedule themselves.
+  # And Will keep re-scheduling for all the reminders you've missed.
+
   - name: "Test reminder everyday at 10:30 pm IST"
-    when: "2020-07-04T22:30:00+05:30"
+    when: "2020-07-10:30:00+05:30"
     repeat: EveryDay
+  
+  - name: "Test reminder every other day at 10:30 pm IST"
+    when: "2020-07-10:30:00+05:30"
+    repeat:
+      EveryNthDay: 2
 
   - name: Test reminder every week at 11 am IST
     when: "2020-07-10T11:00:00+05:30"
     repeat: EveryWeek
+
+  - name: Test reminder every 3rd week at 11 am IST
+    when: "2020-07-10T11:00:00+05:30"
+    repeat:
+      EveryNthWeek: 3
   
   - name: "Test reminder every saturday and sunday at 9:15 am IST"
     when: "2020-07-10T09:15:00+05:30"
     repeat:
-      Weekly:
+      Weekdays:
         - Sat
         - Sun
+  
+  - name: "Test reminder every 2nd saturday at 9:15 am IST"
+    when: "2020-07-10T09:15:00+05:30"
+    repeat:
+      EveryNthWeekday:
+        n: 2
+        weekday: Sat
 ```
 
 I'll keep adding features (small or big) and keep improving the code quality

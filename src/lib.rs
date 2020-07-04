@@ -6,6 +6,7 @@ pub mod task;
 
 pub use crate::command::Command;
 pub use crate::mind::Mind;
+pub use crate::reminder::NthWeekday;
 pub use crate::reminder::Reminder;
 pub use crate::reminder::Repeat;
 pub use crate::storage::Storage;

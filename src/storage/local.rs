@@ -31,7 +31,8 @@ impl Storage for LocalStorage {
     }
 
     fn load(&self) -> io::Result<Mind> {
-        let mind: Mind = serde_yaml::from_reader(BufReader::new(&File::open(&self.path)?)).expect("invalid format");
+        let mind: Mind = serde_yaml::from_reader(BufReader::new(&File::open(&self.path)?))
+            .expect("invalid format");
         return Ok(mind);
     }
     fn save(&self, mind: Mind) -> io::Result<()> {

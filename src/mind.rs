@@ -50,10 +50,13 @@ impl Mind {
             let next = match reminder.repeat().clone() {
                 Repeat::Never => None,
                 Repeat::EveryDay => Some(*reminder.when() + Duration::days(1)),
+                Repeat::EveryNthDay(days) => Some(*reminder.when() + Duration::days(days.into())),
                 Repeat::EveryWeek => Some(*reminder.when() + Duration::days(7)),
-                Repeat::Weekly(weekdays) => {
-                    let mut weekday = reminder.when().naive_local().weekday().succ();
-
+                Repeat::EveryNthWeek(weeks) => {
+                    Some(*reminder.when() + Duration::days((weeks * 7).into()))
+                }
+                Repeat::Weekdays(weekdays) | Repeat::Weekly(weekdays) => {
+                    let mut weekday = reminder.when().weekday().succ();
                     let mut days = 1;
 
                     while !weekdays.contains(&weekday) {
@@ -62,6 +65,17 @@ impl Mind {
                     }
 
                     Some(*reminder.when() + Duration::days(days))
+                }
+                Repeat::EveryNthWeekday(nthweekday) => {
+                    let mut weekday = reminder.when().weekday().succ();
+                    let mut days = 1;
+
+                    while weekday != nthweekday.weekday() {
+                        weekday = weekday.succ();
+                        days += 1;
+                    }
+
+                    Some(*reminder.when() + Duration::days((days + 7 * nthweekday.n()).into()))
                 }
             };
 

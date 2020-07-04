@@ -83,50 +83,48 @@ mind p 3
 A productive mind can remind itself of the pending and repeating tasks
 ----------------------------------------------------------------------
 
-Open `~/.mind/mind.yml` and add the reminders in the given format (see `~/.mind/reminder_examples.yml`)
+Open `~/.mind/reminders.yml` and add the reminders in the given format (see `~/.mind/reminder_examples.yml`)
 
 ```yaml
-reminders:
+# This reminder will disappear once executed.
 
-  # This reminder will disappear once executed.
+- name: Test reminder once on 10 July 2020, at 8 am IST
+  when: "2020-07-10T08:00:00+05:30"
+  repeat: Never
 
-  - name: Test reminder once on 10 July 2020, at 8 am IST
-    when: "2020-07-10T08:00:00+05:30"
-    repeat: Never
+# The following reminders will reschedule themselves.
 
-  # The following reminders will reschedule themselves.
+- name: "Test reminder everyday at 10:30 pm IST"
+  when: "2020-07-10T10:30:00+05:30"
+  repeat: EveryDay
 
-  - name: "Test reminder everyday at 10:30 pm IST"
-    when: "2020-07-10T10:30:00+05:30"
-    repeat: EveryDay
+- name: "Test reminder every other day at 10:30 pm IST"
+  when: "2020-07-10T10:30:00+05:30"
+  repeat:
+    EveryNthDay: 2
 
-  - name: "Test reminder every other day at 10:30 pm IST"
-    when: "2020-07-10T10:30:00+05:30"
-    repeat:
-      EveryNthDay: 2
+- name: Test reminder every week at 11 am IST
+  when: "2020-07-10T11:00:00+05:30"
+  repeat: EveryWeek
 
-  - name: Test reminder every week at 11 am IST
-    when: "2020-07-10T11:00:00+05:30"
-    repeat: EveryWeek
+- name: Test reminder every 3rd week at 11 am IST
+  when: "2020-07-10T11:00:00+05:30"
+  repeat:
+    EveryNthWeek: 3
 
-  - name: Test reminder every 3rd week at 11 am IST
-    when: "2020-07-10T11:00:00+05:30"
-    repeat:
-      EveryNthWeek: 3
+- name: "Test reminder every saturday and sunday at 9:15 am IST"
+  when: "2020-07-10T09:15:00+05:30"
+  repeat:
+    Weekdays:
+      - Sat
+      - Sun
 
-  - name: "Test reminder every saturday and sunday at 9:15 am IST"
-    when: "2020-07-10T09:15:00+05:30"
-    repeat:
-      Weekdays:
-        - Sat
-        - Sun
-
-  - name: "Test reminder every 2nd saturday at 9:15 am IST"
-    when: "2020-07-10T09:15:00+05:30"
-    repeat:
-      EveryNthWeekday:
-        n: 2
-        weekday: Sat
+- name: "Test reminder every 2nd saturday at 9:15 am IST"
+  when: "2020-07-10T09:15:00+05:30"
+  repeat:
+    EveryNthWeekday:
+      n: 2
+      weekday: Sat
 ```
 
 I'll keep adding features (small or big) and keep improving the code quality

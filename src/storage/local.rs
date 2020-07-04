@@ -7,7 +7,8 @@ use std::io::{self, BufReader, Write};
 use std::path::{Path, PathBuf};
 
 pub struct LocalStorage {
-    mind_path: PathBuf,
+    mind_tasks_path: PathBuf,
+    mind_reminders_path: PathBuf,
 }
 
 impl Storage for LocalStorage {
@@ -22,10 +23,18 @@ impl Storage for LocalStorage {
             fs::create_dir(&local_storage)?;
         };
 
-        let mind_file_path = local_storage.join("mind.yml");
-        if !mind_file_path.exists() {
-            let file = File::create(&mind_file_path)?;
-            serde_yaml::to_writer(&file, &Mind::default()).expect("failed to create mind.yml");
+        let mind_tasks_path = local_storage.join("tasks.yml");
+        let default_mind = Mind::default();
+        if !mind_tasks_path.exists() {
+            let file = File::create(&mind_tasks_path)?;
+            serde_yaml::to_writer(&file, default_mind.tasks()).expect("failed to create tasks.yml");
+        };
+
+        let mind_reminders_path = local_storage.join("reminders.yml");
+        if !mind_reminders_path.exists() {
+            let file = File::create(&mind_reminders_path)?;
+            serde_yaml::to_writer(&file, default_mind.tasks())
+                .expect("failed to create reminders.yml");
         };
 
         let reminder_examples_path = local_storage.join("reminder_examples.yml");
@@ -33,17 +42,25 @@ impl Storage for LocalStorage {
         file.write_all(REMINDER_EXAMPLES.as_bytes())?;
 
         Ok(Self {
-            mind_path: mind_file_path,
+            mind_tasks_path,
+            mind_reminders_path,
         })
     }
 
     fn load(&self) -> io::Result<Mind> {
-        let mind: Mind = serde_yaml::from_reader(BufReader::new(&File::open(&self.mind_path)?))
-            .expect("invalid format");
+        let mind: Mind = Mind::from(
+            serde_yaml::from_reader(BufReader::new(&File::open(&self.mind_tasks_path)?))
+                .expect("invalid format"),
+            serde_yaml::from_reader(BufReader::new(&File::open(&self.mind_reminders_path)?))
+                .expect("invalid format"),
+        );
         return Ok(mind);
     }
     fn save(&self, mind: Mind) -> io::Result<()> {
-        serde_yaml::to_writer(File::create(&self.mind_path)?, &mind).expect("failed to save file.");
+        serde_yaml::to_writer(File::create(&self.mind_tasks_path)?, mind.tasks())
+            .expect("failed to save file.");
+        serde_yaml::to_writer(File::create(&self.mind_reminders_path)?, mind.reminders())
+            .expect("failed to save file.");
         Ok(())
     }
 }

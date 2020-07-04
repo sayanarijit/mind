@@ -1,19 +1,20 @@
 use crate::{Command, Reminder, Task};
 use chrono::Local;
 use chrono_humanize::HumanTime;
-use serde::{Deserialize, Serialize};
 use std::fmt;
 use termion::color;
 
-#[derive(Default, Serialize, Deserialize)]
+#[derive(Default)]
 pub struct Mind {
-    #[serde(default)]
     reminders: Vec<Reminder>,
-    #[serde(default)]
     tasks: Vec<Task>,
 }
 
 impl Mind {
+    pub fn from(tasks: Vec<Task>, reminders: Vec<Reminder>) -> Self {
+        Self { tasks, reminders }
+    }
+
     fn push(&mut self, name: String) {
         if let Some((_task, idx)) = self
             .tasks
@@ -36,6 +37,10 @@ impl Mind {
         &self.tasks
     }
 
+    pub fn reminders(&self) -> &Vec<Reminder> {
+        &self.reminders
+    }
+
     pub fn remind_tasks(&mut self) {
         let now = Local::now();
         let mut new_reminders: Vec<Reminder> = Vec::new();
@@ -47,7 +52,6 @@ impl Mind {
             }
 
             self.push(reminder.name().clone());
-            
             if let Some(next) = reminder.next() {
                 let mut next = next;
                 while next.when().clone() <= now {

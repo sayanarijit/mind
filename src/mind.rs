@@ -45,22 +45,16 @@ impl Mind {
                 new_reminders.push(reminder);
                 continue;
             }
+
             self.push(reminder.name().clone());
-
-            let mut next = reminder.repeat().when_next(reminder.when().clone());
-            if next.is_none() {
-                continue;
-            };
-
-            while next.unwrap() <= now {
-                next = reminder.repeat().when_next(next.unwrap());
+            
+            if let Some(next) = reminder.next() {
+                let mut next = next;
+                while next.when().clone() <= now {
+                    next = next.next().unwrap();
+                }
+                new_reminders.push(next);
             }
-
-            new_reminders.push(Reminder::new(
-                reminder.name().clone(),
-                next.unwrap(),
-                reminder.repeat().clone(),
-            ));
         }
         self.reminders = new_reminders;
     }

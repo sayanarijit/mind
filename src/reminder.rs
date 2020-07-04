@@ -1,6 +1,49 @@
 use chrono::{DateTime, Local, Weekday};
 use serde::{Deserialize, Serialize};
 
+pub static REMINDER_EXAMPLES: &str = r###"
+# This reminder will disappear once executed.
+
+- name: Test reminder once on 10 July 2020, at 8 am IST
+  when: "2020-07-10T08:00:00+05:30"
+  repeat: Never
+
+# The following reminders will reschedule themselves.
+# And Will keep re-scheduling for all the reminders you've missed.
+
+- name: "Test reminder everyday at 10:30 pm IST"
+  when: "2020-07-10T10:30:00+05:30"
+  repeat: EveryDay
+
+- name: "Test reminder every other day at 10:30 pm IST"
+  when: "2020-07-10T10:30:00+05:30"
+  repeat:
+    EveryNthDay: 2
+
+- name: Test reminder every week at 11 am IST
+  when: "2020-07-10T11:00:00+05:30"
+  repeat: EveryWeek
+
+- name: Test reminder every 3rd week at 11 am IST
+  when: "2020-07-10T11:00:00+05:30"
+  repeat:
+    EveryNthWeek: 3
+
+- name: "Test reminder every saturday and sunday at 9:15 am IST"
+  when: "2020-07-10T09:15:00+05:30"
+  repeat:
+    Weekdays:
+      - Sat
+      - Sun
+
+- name: "Test reminder every 2nd saturday at 9:15 am IST"
+  when: "2020-07-10T09:15:00+05:30"
+  repeat:
+    EveryNthWeekday:
+      n: 2
+      weekday: Sat
+"###;
+
 #[derive(Serialize, Deserialize, Copy, Clone)]
 pub struct NthWeekday {
     n: u32,
@@ -50,5 +93,16 @@ impl Reminder {
     }
     pub fn repeat(&self) -> &Repeat {
         &self.repeat
+    }
+
+    pub fn examples() -> Vec<Reminder> {
+        let lines: Vec<&str> = REMINDER_EXAMPLES
+            .lines()
+            .collect();
+        let tmpl = lines.join("\n");
+        // println!("{}", &tmpl);
+        let reminders: Vec<Reminder> =
+            serde_yaml::from_str(tmpl.trim()).expect("invalid reminders template");
+        reminders
     }
 }

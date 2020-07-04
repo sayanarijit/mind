@@ -3,6 +3,17 @@ A Productive Mind
 
 [![Crates.io](https://img.shields.io/crates/v/mind.svg)](https://crates.io/crates/mind)
 
+[![asciicast](https://asciinema.org/a/345280.svg)](https://asciinema.org/a/345280)
+
+Install
+-------
+
+You need [cargo to install mind](https://www.rust-lang.org/tools/install).
+
+```bash
+cargo install mind
+```
+
 A productive mind can push and pop tasks into it's stack efficiently
 --------------------------------------------------------------------
 
@@ -72,7 +83,7 @@ mind p 3
 A productive mind can remind itself of the pending and repeating tasks
 ----------------------------------------------------------------------
 
-Open `~/.mind/mind.yml` and add the reminders in the given format
+Open `~/.mind/mind.yml` and add the reminders in the given format (see `~/.mind/reminder_examples.yml`)
 
 ```yaml
 reminders:
@@ -87,11 +98,11 @@ reminders:
   # And Will keep re-scheduling for all the reminders you've missed.
 
   - name: "Test reminder everyday at 10:30 pm IST"
-    when: "2020-07-10:30:00+05:30"
+    when: "2020-07-10T10:30:00+05:30"
     repeat: EveryDay
-  
+
   - name: "Test reminder every other day at 10:30 pm IST"
-    when: "2020-07-10:30:00+05:30"
+    when: "2020-07-10T10:30:00+05:30"
     repeat:
       EveryNthDay: 2
 
@@ -103,14 +114,14 @@ reminders:
     when: "2020-07-10T11:00:00+05:30"
     repeat:
       EveryNthWeek: 3
-  
+
   - name: "Test reminder every saturday and sunday at 9:15 am IST"
     when: "2020-07-10T09:15:00+05:30"
     repeat:
       Weekdays:
         - Sat
         - Sun
-  
+
   - name: "Test reminder every 2nd saturday at 9:15 am IST"
     when: "2020-07-10T09:15:00+05:30"
     repeat:

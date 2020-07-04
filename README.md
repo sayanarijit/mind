@@ -94,7 +94,7 @@ reminders:
     when: "2020-07-10T08:00:00+05:30"
     repeat: Never
 
-  # Following reminders will reschedule themselves.
+  # The following reminders will reschedule themselves.
 
   - name: "Test reminder everyday at 10:30 pm IST"
     when: "2020-07-10T10:30:00+05:30"
@@ -130,4 +130,4 @@ reminders:
 ```
 
 I'll keep adding features (small or big) and keep improving the code quality
-while I learn more cool ways to be productive and become better developer.
+while I learn more cool ways to be productive and become a better developer.

@@ -1,4 +1,4 @@
-use chrono::{DateTime, Local, Weekday};
+use chrono::{DateTime, Datelike, Duration, Local, Weekday};
 use serde::{Deserialize, Serialize};
 
 pub static REMINDER_EXAMPLES: &str = r###"
@@ -71,6 +71,39 @@ pub enum Repeat {
     Weekly(Vec<Weekday>),
     Weekdays(Vec<Weekday>),
     EveryNthWeekday(NthWeekday),
+}
+impl Repeat {
+    pub fn when_next(&self, when_last: DateTime<Local>) -> Option<DateTime<Local>> {
+        match self {
+            Self::Never => None,
+            Self::EveryDay => Some(when_last + Duration::days(1)),
+            Self::EveryNthDay(days) => Some(when_last + Duration::days(*days as i64)),
+            Self::EveryWeek => Some(when_last + Duration::days(7)),
+            Self::EveryNthWeek(weeks) => Some(when_last + Duration::days((weeks * 7).into())),
+            Self::Weekdays(weekdays) | Self::Weekly(weekdays) => {
+                let mut weekday = when_last.weekday().succ();
+                let mut days = 1;
+
+                while !weekdays.contains(&weekday) {
+                    weekday = weekday.succ();
+                    days += 1;
+                }
+
+                Some(when_last + Duration::days(days))
+            }
+            Self::EveryNthWeekday(nthweekday) => {
+                let mut weekday = when_last.weekday().succ();
+                let mut days = 1;
+
+                while weekday != nthweekday.weekday() {
+                    weekday = weekday.succ();
+                    days += 1;
+                }
+
+                Some(when_last + Duration::days((days + 7 * nthweekday.n()).into()))
+            }
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone)]

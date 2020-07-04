@@ -96,13 +96,8 @@ impl Reminder {
     }
 
     pub fn examples() -> Vec<Reminder> {
-        let lines: Vec<&str> = REMINDER_EXAMPLES
-            .lines()
-            .collect();
-        let tmpl = lines.join("\n");
-        // println!("{}", &tmpl);
         let reminders: Vec<Reminder> =
-            serde_yaml::from_str(tmpl.trim()).expect("invalid reminders template");
+            serde_yaml::from_str(REMINDER_EXAMPLES).expect("invalid reminders template");
         reminders
     }
 }

@@ -1,6 +1,6 @@
 [package]
 name = "mind"
-version = "0.1.12"
+version = "0.1.13"
 authors = ["Arijit Basu <sayanarijit@gmail.com>"]
 edition = "2018"
 description = "A Productive Mind"

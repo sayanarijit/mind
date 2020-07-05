@@ -3,7 +3,7 @@ A Productive Mind
 
 [![Crates.io](https://img.shields.io/crates/v/mind.svg)](https://crates.io/crates/mind)
 
-[![asciicast](https://asciinema.org/a/345280.svg)](https://asciinema.org/a/345280)
+[![asciicast](https://asciinema.org/a/345440.svg)](https://asciinema.org/a/345440)
 
 Install
 -------

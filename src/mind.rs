@@ -1,7 +1,12 @@
 use crate::{Command, Reminder, Task};
 use chrono::Local;
 use chrono_humanize::HumanTime;
+use std::env;
 use std::fmt;
+use std::fs::File;
+use std::io::{self, Read, Write};
+use std::iter;
+use std::process;
 use termion::color;
 use termion::terminal_size;
 
@@ -64,6 +69,53 @@ impl Mind {
         self.reminders = new_reminders;
     }
 
+    pub fn edit(&mut self, index: usize) -> io::Result<()> {
+        let task = self.tasks.get_mut(index).expect("invalid index");
+        let h1 = iter::repeat('=')
+            .take(task.name().chars().count())
+            .collect::<String>();
+        let path = env::temp_dir().join("___mind___tmp_task___.md");
+
+        {
+            let mut file = File::create(&path)?;
+
+            write!(
+                file,
+                "{}\n{}\n\n{}",
+                task.name(),
+                h1,
+                task.details()
+                    .clone()
+                    .unwrap_or("Write details here...".into())
+            )?;
+        }
+
+        process::Command::new(env::var("EDITOR").unwrap_or("vi".into()))
+            .arg(&path)
+            .status()
+            .expect("failed to open editor");
+
+        let mut contents = String::new();
+        File::open(&path)?.read_to_string(&mut contents)?;
+        let mut lines = contents.lines();
+        let name = lines.next().expect("missing the task name");
+        lines.next();
+
+        let details = lines.collect::<String>();
+        let details = details.trim();
+
+        task.edit(
+            name.into(),
+            if details.chars().count() > 0 {
+                Some(details.into())
+            } else {
+                None
+            },
+        );
+
+        Ok(())
+    }
+
     pub fn act(&mut self, command: Command) {
         match command {
             Command::Push(name) => {
@@ -78,6 +130,12 @@ impl Mind {
             }
             Command::PopLast => {
                 self.pop();
+            }
+            Command::Edit(index) => {
+                self.edit(index).expect("failed to edit");
+            }
+            Command::EditLast => {
+                self.edit(self.tasks.len() - 1).expect("failed to edit");
             }
         }
     }

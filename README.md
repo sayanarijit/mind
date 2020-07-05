@@ -51,6 +51,8 @@ Supported commands in both CLI and interactive mode
 | `{int}`                             |                     | Continue with the task at the given position
 | `pop`                               | `p`                 | Pop out the current task
 | `pop {int}`                         | `p {int}`           | Pop out the task at the given position
+| `edit`                              | `e`                 | Edit the current task
+| `edit {int}`                        | `e {int}`           | Edit the task at the given position
 
 Example 1: Continue with the task positioned at `[3]`
 
@@ -78,6 +80,20 @@ mind p 3
 
 ```bash
 /p 3
+```
+
+Example 3: Edit the task positioned at `[3]`
+
+* CLI mode
+
+```bash
+mind e 3
+```
+
+* Interactive mode
+
+```bash
+/e 3
 ```
 
 A productive mind can remind itself of the pending and repeating tasks

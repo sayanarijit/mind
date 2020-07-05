@@ -11,11 +11,11 @@ pub static REMINDER_EXAMPLES: &str = r###"
 # The following reminders will reschedule themselves.
 
 - name: "Test reminder everyday at 10:30 pm IST"
-  when: "2020-07-10T10:30:00+05:30"
+  when: "2020-07-10T22:30:00+05:30"
   repeat: EveryDay
 
 - name: "Test reminder every other day at 10:30 pm IST"
-  when: "2020-07-10T10:30:00+05:30"
+  when: "2020-07-10T22:30:00+05:30"
   repeat:
     EveryNthDay: 2
 

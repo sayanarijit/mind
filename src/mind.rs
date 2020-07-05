@@ -92,7 +92,7 @@ impl fmt::Display for Mind {
         let width = self
             .tasks
             .iter()
-            .map(|t| t.name().chars().count().min(max_name_width as usize))
+            .map(|t| t.name().chars().count().min(max_name_width))
             .max()
             .unwrap_or(0);
         let now = Local::now();

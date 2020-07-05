@@ -3,6 +3,7 @@ use chrono::Local;
 use chrono_humanize::HumanTime;
 use std::fmt;
 use termion::color;
+use termion::terminal_size;
 
 #[derive(Default)]
 pub struct Mind {
@@ -86,22 +87,24 @@ impl fmt::Display for Mind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut color = 155 as u8;
         let len = self.tasks.len();
+        let max_name_width = terminal_size().expect("failed to get terminal size").0 as usize - 30;
 
         let width = self
             .tasks
             .iter()
-            .map(|t| t.name().chars().count())
+            .map(|t| t.name().chars().count().min(max_name_width as usize))
             .max()
             .unwrap_or(0);
         let now = Local::now();
 
         for (task, idx) in self.tasks.iter().zip(0..) {
+            let name = task.name().chars().take(max_name_width);
             writeln!(
                 f,
                 "[{}] {}{:width$}{}\t{}{}{}",
                 idx,
                 color::Fg(color::Rgb(color - 70, color - 30, color)),
-                &task.name(),
+                name.collect::<String>(),
                 color::Fg(color::Reset),
                 color::Fg(color::Rgb(color - 50, color - 50, color - 50)),
                 &HumanTime::from(*task.start() - now),

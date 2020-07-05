@@ -137,7 +137,7 @@ checksum = "8dd5a6d5999d9907cda8ed67bbd137d3af8085216c2ac62de5be860bd41f304a"
 
 [[package]]
 name = "mind"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "chrono",
  "chrono-humanize",

@@ -126,16 +126,22 @@ impl Mind {
                 self.tasks.push(task);
             }
             Command::Pop(index) => {
-                self.tasks.remove(index);
+                if index < self.tasks.len() {
+                    self.tasks.remove(index);
+                }
             }
             Command::PopLast => {
                 self.pop();
             }
             Command::Edit(index) => {
-                self.edit(index).expect("failed to edit");
+                if index < self.tasks.len() {
+                    self.edit(index).expect("failed to edit");
+                }
             }
             Command::EditLast => {
-                self.edit(self.tasks.len() - 1).expect("failed to edit");
+                if self.tasks.len() > 0 {
+                    self.edit(self.tasks.len() - 1).expect("failed to edit");
+                }
             }
         }
     }

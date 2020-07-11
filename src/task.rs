@@ -38,14 +38,13 @@ impl Task {
 
 impl fmt::Display for Task {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}\n{}\n\n{}",
-            &self.name,
-            iter::repeat("=")
-                .take(self.name.chars().count())
-                .collect::<String>(),
-            self.details.clone().unwrap_or("No details...".into()),
-        )
+        let hr = iter::repeat("=")
+            .take(self.name.chars().count())
+            .collect::<String>();
+        let details = self.details.clone().unwrap_or("No details...".into());
+
+        writeln!(f, "{}", &self.name)?;
+        writeln!(f, "{}", hr)?;
+        write!(f, "{}", details)
     }
 }

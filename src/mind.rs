@@ -10,7 +10,7 @@ use termion::color;
 use termion::terminal_size;
 
 // Access it using Mind::version()
-static VERSION: &str = "0.4.1";
+static VERSION: &str = "0.4.2";
 
 /// The productive mind.
 #[derive(Default)]
@@ -195,8 +195,9 @@ impl fmt::Display for Mind {
         let now = Local::now();
 
         for (task, idx) in self.tasks.iter().zip(0..) {
+
             let name = task.name().chars().take(max_name_width);
-            writeln!(
+            write!(
                 f,
                 "[{}] {}{:width$}{}\t{}{}",
                 idx,
@@ -207,6 +208,18 @@ impl fmt::Display for Mind {
                 color::Fg(color::Reset),
                 width = width
             )?;
+
+            if let Some(focused) = self.focused {
+                if focused == idx {
+                    writeln!(f)?;
+                    write!(f, "{}", &task)?;
+                }
+            }
+
+            if idx < len - 1 {
+                writeln!(f)?
+            }
+
             color += 100 as u8 / len as u8;
         }
         Ok(())

@@ -108,6 +108,20 @@ mind e 3
 /e 3
 ```
 
+Example 5: Get details of the task positioned at `[3]`
+
+* CLI mode
+
+```bash
+mind g 3
+```
+
+* Interactive mode
+
+```bash
+/g 3
+```
+
 A productive mind can remind itself of the pending and repeating tasks
 ----------------------------------------------------------------------
 

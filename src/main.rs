@@ -44,7 +44,7 @@ fn run() -> io::Result<()> {
             let stdin = io::stdin();
             let mut handle = stdin.lock();
 
-            print!("{}", &mind);
+            println!("{}", &mind);
             print!("[{}] ", mind.tasks().len());
             stdout.flush()?;
 

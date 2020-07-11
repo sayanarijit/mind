@@ -1,4 +1,4 @@
-A Productive Mind
+A productive mind
 =================
 
 [![Crates.io](https://img.shields.io/crates/v/mind.svg)](https://crates.io/crates/mind)

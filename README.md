@@ -46,13 +46,13 @@ Or while in interactive mode
 
 Supported commands in both CLI and interactive mode
 
-| Command                             | Aliases             | Action
-|-------------------------------------|---------------------|------------------------------------------
-| `{int}`                             |                     | Continue with the task at the given position
-| `pop`                               | `p`                 | Pop out the current task
-| `pop {int}`                         | `p {int}`           | Pop out the task at the given position
-| `edit`                              | `e`                 | Edit the current task
-| `edit {int}`                        | `e {int}`           | Edit the task at the given position
+| Command         | Aliases     | Action
+|-----------------|-------------|------------------------------------------
+| `{num}`         |             | Continue with the task at the given position
+| `pop`           | `p`         | Pop out the current task
+| `pop {num}`     | `p {num}`   | Pop out the task at the given position
+| `edit`          | `e`         | Edit the current task
+| `edit {num}`    | `e {num}`   | Edit the task at the given position
 
 Example 1: Continue with the task positioned at `[3]`
 

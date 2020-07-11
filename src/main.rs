@@ -1,5 +1,5 @@
 use mind::storage::local::LocalStorage;
-use mind::{Command, Storage};
+use mind::{Mind, Command, Storage};
 use std::env;
 use std::io::{self, BufRead, Write};
 use termion::screen::AlternateScreen;
@@ -11,7 +11,25 @@ fn main() -> io::Result<()> {
 
     let args: Vec<String> = env::args().skip(1).collect();
     if args.len() > 0 {
-        if let Some(command) = Command::from(args.iter().map(|x| x.trim())) {
+        if args.get(0).unwrap() == "--version" {
+            println!("{}", Mind::version());
+            std::process::exit(0);
+        }
+        else if args.get(0).unwrap() == "--help" {
+            println!("mind - A productive mind");
+            println!();
+            println!("ARGS:");
+            println!("  --version      \tPrint the binary version");
+            println!("  --help         \tPrint this help menu");
+            println!();
+            println!("SUB COMMANDS:");
+            println!("  {{num}}        \t\tContinue with the task at {{num}} position");
+            println!("  pop            \t(alias: p) Pop the last task from mind");
+            println!("  pop {{num}}    \t\t(alias: p {{num}}) Pop the task at {{num}} position");
+            println!("  edit           \t(alias: e) Edit the last task in mind");
+            println!("  edit {{num}}   \t\t(alias: e {{num}}) Edit the task at {{num}} position");
+            std::process::exit(0);
+        } else if let Some(command) = Command::from(args.iter().map(|x| x.trim())) {
             mind.act(command);
         } else {
             eprintln!("error: invalid sub command: {}", args.get(0).unwrap());

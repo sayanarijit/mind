@@ -41,6 +41,11 @@ impl Storage for LocalStorage {
         let mut file = File::create(&reminder_examples_path)?;
         file.write_all(REMINDER_EXAMPLES.as_bytes())?;
 
+        // TODO Add version compatibility logic
+        let mind_version_path = local_storage.join("version");
+        let mut file = File::create(&mind_version_path)?;
+        file.write_all(Mind::version().as_bytes())?;
+
         Ok(Self {
             mind_tasks_path,
             mind_reminders_path,

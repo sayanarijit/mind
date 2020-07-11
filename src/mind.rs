@@ -10,10 +10,14 @@ use std::process;
 use termion::color;
 use termion::terminal_size;
 
+// Access it using Mind::version()
+static VERSION: &str = "0.3.3";
+
+/// The productive mind.
 #[derive(Default)]
 pub struct Mind {
-    reminders: Vec<Reminder>,
     tasks: Vec<Task>,
+    reminders: Vec<Reminder>,
 }
 
 impl Mind {
@@ -39,14 +43,22 @@ impl Mind {
         self.tasks.pop()
     }
 
+    /// Get the version. See ~/.mind/version
+    pub fn version() -> &'static str {
+        VERSION
+    }
+
+    /// Get the pending tasks. See ~/.mind/tasks.yml
     pub fn tasks(&self) -> &Vec<Task> {
         &self.tasks
     }
 
+    /// Get the reminders. See ~/.mind/reminders.yml
     pub fn reminders(&self) -> &Vec<Reminder> {
         &self.reminders
     }
 
+    /// Go through the reminders and taks proper action.
     pub fn remind_tasks(&mut self) {
         let now = Local::now();
         let mut new_reminders: Vec<Reminder> = Vec::new();
@@ -57,7 +69,7 @@ impl Mind {
                 continue;
             }
 
-            self.push(reminder.name().clone());
+            self.push(format!("[reminder] {}", &reminder.name().clone()));
             if let Some(next) = reminder.next() {
                 let mut next = next;
                 while next.when().clone() <= now {
@@ -69,7 +81,7 @@ impl Mind {
         self.reminders = new_reminders;
     }
 
-    pub fn edit(&mut self, index: usize) -> io::Result<()> {
+    fn edit(&mut self, index: usize) -> io::Result<()> {
         let task = self.tasks.get_mut(index).expect("invalid index");
         let h1 = iter::repeat('=')
             .take(task.name().chars().count())
@@ -116,28 +128,35 @@ impl Mind {
         Ok(())
     }
 
+    /// Act based on the given command.
     pub fn act(&mut self, command: Command) {
         match command {
+
             Command::Push(name) => {
                 self.push(name);
             }
+
             Command::Continue(index) => {
                 let task = self.tasks.remove(index);
                 self.tasks.push(task);
             }
+
             Command::Pop(index) => {
                 if index < self.tasks.len() {
                     self.tasks.remove(index);
                 }
             }
+
             Command::PopLast => {
                 self.pop();
             }
+
             Command::Edit(index) => {
                 if index < self.tasks.len() {
                     self.edit(index).expect("failed to edit");
                 }
             }
+
             Command::EditLast => {
                 if self.tasks.len() > 0 {
                     self.edit(self.tasks.len() - 1).expect("failed to edit");

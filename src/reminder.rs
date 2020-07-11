@@ -132,6 +132,7 @@ impl Reminder {
             serde_yaml::from_str(REMINDER_EXAMPLES).expect("invalid reminders template");
         reminders
     }
+
     pub fn next(&self) -> Option<Self> {
         self.repeat
             .when_next(self.when.clone())

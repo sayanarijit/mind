@@ -10,15 +10,19 @@ pub enum Command {
 impl<'a> Command {
     pub fn from<I: Iterator<Item = &'a str>>(mut statement: I) -> Option<Self> {
         match statement.next() {
-            Some("p") | Some("pop") => Some(statement.next().map_or(Self::PopLast, |arg| {
-                Self::Pop(arg.parse().expect("invalid argument"))
-            })),
+            Some("p") | Some("pop") => statement.next().map_or(Some(Self::PopLast), |arg| {
+                arg.parse::<usize>()
+                    .map_or(None, |num| Some(Self::Pop(num)))
+            }),
 
-            Some("e") | Some("edit") => Some(statement.next().map_or(Self::EditLast, |arg| {
-                Self::Edit(arg.parse().expect("invalid argument"))
-            })),
+            Some("e") | Some("edit") => statement.next().map_or(Some(Self::EditLast), |arg| {
+                arg.parse::<usize>()
+                    .map_or(None, |num| Some(Self::Edit(num)))
+            }),
 
-            Some(num) => Some(Self::Continue(num.parse().expect("invalid argument"))),
+            Some(arg) => arg
+                .parse::<usize>()
+                .map_or(None, |num| Some(Self::Continue(num))),
 
             _ => None,
         }

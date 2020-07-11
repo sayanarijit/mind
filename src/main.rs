@@ -1,10 +1,11 @@
 use mind::storage::local::LocalStorage;
-use mind::{Mind, Command, Storage};
+use mind::{Command, Mind, Storage};
 use std::env;
 use std::io::{self, BufRead, Write};
 use termion::screen::AlternateScreen;
 
-fn main() -> io::Result<()> {
+// TODO proper error handling
+fn run() -> io::Result<()> {
     let storage = LocalStorage::init()?;
     let mut mind = storage.load()?;
     mind.remind_tasks();
@@ -14,8 +15,7 @@ fn main() -> io::Result<()> {
         if args.get(0).unwrap() == "--version" {
             println!("{}", Mind::version());
             std::process::exit(0);
-        }
-        else if args.get(0).unwrap() == "--help" {
+        } else if args.get(0).unwrap() == "--help" {
             println!("mind - A productive mind");
             println!();
             println!("ARGS:");
@@ -62,7 +62,10 @@ fn main() -> io::Result<()> {
                     .next()
                     .expect("missing command")
                     .split(' ');
-                mind.act(Command::from(statement).expect("missing command"));
+
+                if let Some(command) = Command::from(statement) {
+                    mind.act(command);
+                }
             } else {
                 mind.act(Command::Push(input.into()));
             }
@@ -70,7 +73,14 @@ fn main() -> io::Result<()> {
     }
 
     print!("{}", &mind);
-    storage.save(mind)?;
+    storage.save(mind)
+}
 
-    Ok(())
+fn main() {
+    run()
+        .map_err(|err| {
+            eprintln!("{}", err);
+            std::process::exit(1);
+        })
+        .unwrap();
 }

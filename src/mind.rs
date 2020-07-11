@@ -11,7 +11,7 @@ use termion::color;
 use termion::terminal_size;
 
 // Access it using Mind::version()
-static VERSION: &str = "0.3.4";
+static VERSION: &str = "0.4.0";
 
 /// The productive mind.
 #[derive(Default)]

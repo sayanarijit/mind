@@ -3,7 +3,7 @@ use chrono::Local;
 use chrono_humanize::HumanTime;
 use std::env;
 use std::fmt;
-use std::fs::File;
+use std::fs;
 use std::io::{self, Read, Write};
 use std::iter;
 use std::process;
@@ -11,7 +11,7 @@ use termion::color;
 use termion::terminal_size;
 
 // Access it using Mind::version()
-static VERSION: &str = "0.3.3";
+static VERSION: &str = "0.3.4";
 
 /// The productive mind.
 #[derive(Default)]
@@ -89,7 +89,7 @@ impl Mind {
         let path = env::temp_dir().join("___mind___tmp_task___.md");
 
         {
-            let mut file = File::create(&path)?;
+            let mut file = fs::File::create(&path)?;
 
             write!(
                 file,
@@ -108,7 +108,7 @@ impl Mind {
             .expect("failed to open editor");
 
         let mut contents = String::new();
-        File::open(&path)?.read_to_string(&mut contents)?;
+        fs::File::open(&path)?.read_to_string(&mut contents)?;
         let mut lines = contents.lines();
         let name = lines.next().expect("missing the task name");
         lines.next();
@@ -124,6 +124,8 @@ impl Mind {
                 None
             },
         );
+
+        fs::remove_file(path)?;
 
         Ok(())
     }

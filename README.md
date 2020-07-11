@@ -54,7 +54,17 @@ Supported commands in both CLI and interactive mode
 | `edit`          | `e`         | Edit the current task
 | `edit {num}`    | `e {num}`   | Edit the task at the given position
 
-Example 1: Continue with the task positioned at `[3]`
+Examples
+--------
+
+Example 1: Add all the `TODO` and `FIXME` items from the codebase.
+
+```bash
+grep -nR TODO . | mind
+grep -nR FIXME . | mind
+```
+
+Example 2: Continue with the task positioned at `[3]`
 
 * CLI mode
 
@@ -68,7 +78,7 @@ mind 3
 /3
 ```
 
-Example 2: Pop the task positioned at `[3]`
+Example 3: Pop the task positioned at `[3]`
 
 * CLI mode
 
@@ -82,7 +92,7 @@ mind p 3
 /p 3
 ```
 
-Example 3: Edit the task positioned at `[3]`
+Example 4: Edit the task positioned at `[3]`
 
 * CLI mode
 

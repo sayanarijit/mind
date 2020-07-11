@@ -23,11 +23,13 @@ fn run() -> io::Result<()> {
             println!("  --help         \tPrint this help menu");
             println!();
             println!("SUB COMMANDS:");
-            println!("  {{num}}        \t\tContinue with the task at {{num}} position");
-            println!("  pop            \t(alias: p) Pop the last task from mind");
-            println!("  pop {{num}}    \t\t(alias: p {{num}}) Pop the task at {{num}} position");
-            println!("  edit           \t(alias: e) Edit the last task in mind");
-            println!("  edit {{num}}   \t\t(alias: e {{num}}) Edit the task at {{num}} position");
+            println!("  {{num}}        \t\tContinue with the task at the given position");
+            println!("  pop            \t(alias: p) Pop out the current task");
+            println!("  pop {{num}}    \t\t(alias: p {{num}}) Pop out the task at the given position");
+            println!("  edit           \t(alias: e) Edit the current task");
+            println!("  edit {{num}}   \t\t(alias: e {{num}}) Edit the task at the given position");
+            println!("  get            \t(alias: g) Get details of the current task");
+            println!("  get {{num}}    \t\t(alias: g {{num}}) Get details of the task at the given position");
             std::process::exit(0);
         } else if let Some(command) = Command::from(args.iter().map(|x| x.trim())) {
             mind.act(command);
@@ -72,7 +74,12 @@ fn run() -> io::Result<()> {
         }
     }
 
-    print!("{}", &mind);
+    if let Some(focused) = mind.focused() {
+        println!("{}", &focused);
+    } else {
+        println!("{}", &mind);
+    }
+
     storage.save(mind)
 }
 

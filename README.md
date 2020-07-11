@@ -53,6 +53,8 @@ Supported commands in both CLI and interactive mode
 | `pop {num}`     | `p {num}`   | Pop out the task at the given position
 | `edit`          | `e`         | Edit the current task
 | `edit {num}`    | `e {num}`   | Edit the task at the given position
+| `get`           | `g`         | Get details of the current task
+| `get {num}`     | `g {num}`   | Get details of the task at the given position
 
 Examples
 --------

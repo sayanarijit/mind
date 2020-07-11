@@ -1,5 +1,7 @@
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
+use std::fmt;
+use std::iter;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Task {
@@ -21,7 +23,7 @@ impl Task {
     }
 
     pub fn details(&self) -> &Option<String> {
-        return &self.details
+        return &self.details;
     }
 
     pub fn start(&self) -> &DateTime<Local> {
@@ -31,5 +33,19 @@ impl Task {
     pub fn edit(&mut self, name: String, details: Option<String>) {
         self.name = name;
         self.details = details;
+    }
+}
+
+impl fmt::Display for Task {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{}\n{}\n\n{}",
+            &self.name,
+            iter::repeat("=")
+                .take(self.name.chars().count())
+                .collect::<String>(),
+            self.details.clone().unwrap_or("No details...".into()),
+        )
     }
 }

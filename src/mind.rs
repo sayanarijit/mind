@@ -5,24 +5,28 @@ use std::env;
 use std::fmt;
 use std::fs;
 use std::io::{self, Read, Write};
-use std::iter;
 use std::process;
 use termion::color;
 use termion::terminal_size;
 
 // Access it using Mind::version()
-static VERSION: &str = "0.4.0";
+static VERSION: &str = "0.4.1";
 
 /// The productive mind.
 #[derive(Default)]
 pub struct Mind {
     tasks: Vec<Task>,
     reminders: Vec<Reminder>,
+    focused: Option<usize>,
 }
 
 impl Mind {
     pub fn from(tasks: Vec<Task>, reminders: Vec<Reminder>) -> Self {
-        Self { tasks, reminders }
+        Self {
+            tasks,
+            reminders,
+            focused: None,
+        }
     }
 
     fn push(&mut self, name: String) {
@@ -58,6 +62,13 @@ impl Mind {
         &self.reminders
     }
 
+    /// Get the focused task
+    pub fn focused(&self) -> Option<&Task> {
+        self.focused
+            .map(|idx| self.tasks.get(idx).map(|t| Some(t)).unwrap_or(None))
+            .unwrap_or(None)
+    }
+
     /// Go through the reminders and taks proper action.
     pub fn remind_tasks(&mut self) {
         let now = Local::now();
@@ -83,23 +94,11 @@ impl Mind {
 
     fn edit(&mut self, index: usize) -> io::Result<()> {
         let task = self.tasks.get_mut(index).expect("invalid index");
-        let h1 = iter::repeat('=')
-            .take(task.name().chars().count())
-            .collect::<String>();
         let path = env::temp_dir().join("___mind___tmp_task___.md");
 
         {
             let mut file = fs::File::create(&path)?;
-
-            write!(
-                file,
-                "{}\n{}\n\n{}",
-                task.name(),
-                h1,
-                task.details()
-                    .clone()
-                    .unwrap_or("Write details here...".into())
-            )?;
+            write!(file, "{}", task)?;
         }
 
         process::Command::new(env::var("EDITOR").unwrap_or("vi".into()))
@@ -125,22 +124,35 @@ impl Mind {
             },
         );
 
-        fs::remove_file(path)?;
-
-        Ok(())
+        fs::remove_file(path)
     }
 
     /// Act based on the given command.
     pub fn act(&mut self, command: Command) {
-        match command {
+        self.focused = None;
 
+        match command {
             Command::Push(name) => {
                 self.push(name);
             }
 
             Command::Continue(index) => {
-                let task = self.tasks.remove(index);
-                self.tasks.push(task);
+                if index < self.tasks.len() {
+                    let task = self.tasks.remove(index);
+                    self.tasks.push(task);
+                }
+            }
+
+            Command::Get(index) => {
+                if index < self.tasks.len() {
+                    self.focused = Some(index);
+                }
+            }
+
+            Command::GetLast => {
+                if self.tasks.len() > 0 {
+                    self.focused = Some(self.tasks.len() - 1);
+                }
             }
 
             Command::Pop(index) => {
@@ -186,11 +198,10 @@ impl fmt::Display for Mind {
             let name = task.name().chars().take(max_name_width);
             writeln!(
                 f,
-                "[{}] {}{:width$}{}\t{}{}{}",
+                "[{}] {}{:width$}{}\t{}{}",
                 idx,
                 color::Fg(color::Rgb(color - 70, color - 30, color)),
                 name.collect::<String>(),
-                color::Fg(color::Reset),
                 color::Fg(color::Rgb(color - 50, color - 50, color - 50)),
                 &HumanTime::from(*task.start() - now),
                 color::Fg(color::Reset),

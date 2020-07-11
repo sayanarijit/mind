@@ -4,7 +4,7 @@ use serde_yaml;
 use std::fs;
 use std::fs::File;
 use std::io::{self, BufReader, Write};
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 pub struct LocalStorage {
     mind_tasks_path: PathBuf,
@@ -18,7 +18,7 @@ impl Storage for LocalStorage {
 
         let local_storage = dirs::home_dir()
             .expect("failed go get home directory")
-            .join(Path::new(".mind"));
+            .join(".mind");
         if !local_storage.exists() {
             fs::create_dir(&local_storage)?;
         };

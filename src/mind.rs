@@ -80,7 +80,7 @@ impl Mind {
                 continue;
             }
 
-            self.push(format!("[reminder] {}", &reminder.name().clone()));
+            self.push(format!("📆 {}", &reminder.name().clone()));
             if let Some(next) = reminder.next() {
                 let mut next = next;
                 while next.when().clone() <= now {

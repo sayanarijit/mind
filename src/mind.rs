@@ -1,4 +1,5 @@
 use crate::{Command, Reminder, Task};
+use atty;
 use chrono::Local;
 use chrono_humanize::HumanTime;
 use std::env;
@@ -10,7 +11,7 @@ use termion::color;
 use termion::terminal_size;
 
 // Access it using Mind::version()
-static VERSION: &str = "0.4.2";
+static VERSION: &str = "0.4.4";
 
 /// The productive mind.
 #[derive(Default)]
@@ -184,7 +185,7 @@ impl fmt::Display for Mind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut color = 155 as u8;
         let len = self.tasks.len();
-        let max_name_width = terminal_size().expect("failed to get terminal size").0 as usize - 30;
+        let max_name_width = terminal_size().unwrap_or((100, 0)).0 as usize - 30;
 
         let width = self
             .tasks
@@ -195,19 +196,30 @@ impl fmt::Display for Mind {
         let now = Local::now();
 
         for (task, idx) in self.tasks.iter().zip(0..) {
-
             let name = task.name().chars().take(max_name_width);
-            write!(
-                f,
-                "[{}] {}{:width$}{}\t{}{}",
-                idx,
-                color::Fg(color::Rgb(color - 70, color - 30, color)),
-                name.collect::<String>(),
-                color::Fg(color::Rgb(color - 50, color - 50, color - 50)),
-                &HumanTime::from(*task.start() - now),
-                color::Fg(color::Reset),
-                width = width
-            )?;
+
+            if atty::is(atty::Stream::Stdout) {
+                write!(
+                    f,
+                    "[{idx}] {name_color}{name:width$}\t{age_color}{age}{reset_color}",
+                    idx = idx,
+                    name_color = color::Fg(color::Rgb(color - 70, color - 30, color)),
+                    name = name.collect::<String>(),
+                    age_color = color::Fg(color::Rgb(color - 50, color - 50, color - 50)),
+                    age = &HumanTime::from(*task.start() - now),
+                    reset_color = color::Fg(color::Reset),
+                    width = width
+                )?;
+            } else {
+                write!(
+                    f,
+                    "[{idx}] {name:width$}\t{age}",
+                    idx = idx,
+                    name = name.collect::<String>(),
+                    age = &HumanTime::from(*task.start() - now),
+                    width = width
+                )?;
+            }
 
             if let Some(focused) = self.focused {
                 if focused == idx {

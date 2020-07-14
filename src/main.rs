@@ -3,6 +3,7 @@ use mind::{Command, Mind, Storage};
 use std::env;
 use std::io::{self, BufRead, Write};
 use termion::screen::AlternateScreen;
+use atty;
 
 // TODO proper error handling
 fn run() -> io::Result<()> {
@@ -37,7 +38,7 @@ fn run() -> io::Result<()> {
             eprintln!("error: invalid sub command: {}", args.get(0).unwrap());
             std::process::exit(1);
         }
-    } else {
+    } else if atty::is(atty::Stream::Stdout) {
         loop {
             let stdout = std::io::stdout();
             let mut stdout = AlternateScreen::from(stdout);
@@ -55,7 +56,7 @@ fn run() -> io::Result<()> {
 
             if input.chars().count() == 0 {
                 break;
-            }
+            };
 
             if input.chars().next() == Some('/') {
                 let statement = input

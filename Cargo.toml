@@ -1,6 +1,6 @@
 [package]
 name = "mind"
-version = "0.4.3"  # Also update src/mind.rs
+version = "0.4.4"  # Also update src/mind.rs
 authors = ["Arijit Basu <sayanarijit@gmail.com>"]
 edition = "2018"
 description = "A productive mind"
@@ -18,3 +18,4 @@ serde_yaml = "0.8"
 dirs = "3.0"
 termion = "1.5"
 chrono-humanize = "0.0.11"
+atty = "0.2.14"

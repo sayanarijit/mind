@@ -1,9 +1,33 @@
-A productive mind
-=================
+A productive mind is an empty stack
+===================================
 
 [![Crates.io](https://img.shields.io/crates/v/mind.svg)](https://crates.io/crates/mind)
 
 [![asciicast](https://asciinema.org/a/345440.svg)](https://asciinema.org/a/345440)
+
+The philosophy
+--------------
+
+[mind](https://github.com/sayanarijit/mind) follows the following philosophy
+
+> ***A productive mind is an empty stack.***
+
+Sometimes we have too much on our mind but neither the traditional check-boxes, nor
+the kanban board works for us. This is because our mind works like a stack. A stack
+of tasks waiting to be executed. This is why our productivity drops when we try to
+achieve multi tasking using this stack optimized for single thread access.
+
+[mind](https://github.com/sayanarijit/mind) uses this simple formula to measure
+the productivity level of you mind
+
+> ***p = O - b***
+>
+> ***p*** is Productivity
+> ***O*** in Optimal productivity
+> ***b*** is backlog
+
+In other words, the more tasks you keep on your mind and the longer you keep them
+there, the less productive you will become.
 
 Install
 -------

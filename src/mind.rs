@@ -1,5 +1,6 @@
-use crate::{Command, Reminder, Task};
+use crate::{Command, Productivity, Reminder, Task};
 use atty;
+use chrono::Duration;
 use chrono::Local;
 use chrono_humanize::HumanTime;
 use std::env;
@@ -91,6 +92,20 @@ impl Mind {
             }
         }
         self.reminders = new_reminders;
+    }
+
+    // Total backlog
+    pub fn backlog(&self) -> Duration {
+        let now = Local::now();
+        self.tasks
+            .iter()
+            .map(|t| (now - *t.start()))
+            .fold(Duration::zero(), |x, y| x + y)
+    }
+
+    // Productivity from backlog
+    pub fn productivity(&self) -> Productivity {
+        Productivity::from_backlog(self.backlog())
     }
 
     fn edit(&mut self, index: usize) -> io::Result<()> {
@@ -187,37 +202,49 @@ impl fmt::Display for Mind {
         let len = self.tasks.len();
         let max_name_width = terminal_size().unwrap_or((100, 0)).0 as usize - 30;
 
-        let width = self
+        let name_width = self
             .tasks
             .iter()
             .map(|t| t.name().chars().count().min(max_name_width))
             .max()
             .unwrap_or(0);
+        let idx_width = len.to_string().chars().count();
+
         let now = Local::now();
 
         for (task, idx) in self.tasks.iter().zip(0..) {
             let name = task.name().chars().take(max_name_width);
 
+            let name_color = match self.productivity() {
+                Productivity::Optimal => color::Fg(color::Rgb(0, color, 0)),
+                Productivity::High => color::Fg(color::Rgb(color - 75, color - 25, 0)),
+                Productivity::Normal => color::Fg(color::Rgb(color - 50, color - 50, 0)),
+                Productivity::Low => color::Fg(color::Rgb(color - 25, color - 75, 0)),
+                Productivity::UnProductive => color::Fg(color::Rgb(color, 0, 0)),
+            };
+
             if atty::is(atty::Stream::Stdout) {
                 write!(
                     f,
-                    "[{idx}] {name_color}{name:width$}\t{age_color}{age}{reset_color}",
+                    "[{idx:idx_width$}] {name_color}{name:name_width$}\t{age_color}{age}{reset_color}",
                     idx = idx,
-                    name_color = color::Fg(color::Rgb(color - 70, color - 30, color)),
+                    idx_width = idx_width,
+                    name_color = name_color,
                     name = name.collect::<String>(),
                     age_color = color::Fg(color::Rgb(color - 50, color - 50, color - 50)),
                     age = &HumanTime::from(*task.start() - now),
                     reset_color = color::Fg(color::Reset),
-                    width = width
+                    name_width = name_width
                 )?;
             } else {
                 write!(
                     f,
-                    "[{idx}] {name:width$}\t{age}",
+                    "[{idx:idx_width$}] {name:width$}\t{age}",
                     idx = idx,
+                    idx_width = idx_width,
                     name = name.collect::<String>(),
                     age = &HumanTime::from(*task.start() - now),
-                    width = width
+                    width = name_width
                 )?;
             }
 

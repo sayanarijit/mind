@@ -1,9 +1,9 @@
 [package]
 name = "mind"
-version = "0.4.4"  # Also update src/mind.rs
+version = "0.5.0"  # Also update src/mind.rs
 authors = ["Arijit Basu <sayanarijit@gmail.com>"]
 edition = "2018"
-description = "A productive mind"
+description = "A productive mind is an empty stack"
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/sayanarijit/mind"

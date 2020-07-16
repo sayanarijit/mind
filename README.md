@@ -1,4 +1,4 @@
-A productive mind is an empty stack
+A productive mind has an empty stack
 ===================================
 
 [![Crates.io](https://img.shields.io/crates/v/mind.svg)](https://crates.io/crates/mind)
@@ -10,24 +10,33 @@ The philosophy
 
 [mind](https://github.com/sayanarijit/mind) follows the following philosophy
 
-> ***A productive mind is an empty stack.***
+> ***A productive mind has an empty stack.***
 
-Sometimes we have too much on our mind but neither the traditional check-boxes, nor
-the kanban board works for us. This is because our mind works like a stack. A stack
-of tasks waiting to be executed. This is why our productivity drops when we try to
-achieve multi tasking using this stack optimized for single thread access.
+Explaination:
 
-[mind](https://github.com/sayanarijit/mind) uses this simple formula to measure
-the productivity level of you mind
+Sometimes we have too much on our mind but neither the traditional check boxes, nor
+the kanban board works for us. This is because our mind executes the tasks in
+[LIFO](https://en.wikipedia.org/wiki/LIFO_(education)) approach like a
+[stack](https://en.wikipedia.org/wiki/Stack_(abstract_data_type)).
+
+The longer we hold a task in the stack of our mind, the more productivity it will
+lose. Also, trying multitasking with this stack can cause unpredictable results.
+
+We need to execute them as early as possible. But one by one.
+
+[mind](https://github.com/sayanarijit/mind) makes it easy to work with the stack
+of your own mind. It uses this simple formula to measure the current productivity
+level of you mind and uses the appropriate colors to represent the it.
 
 > ***p = O - b***
 >
-> ***p*** is Productivity
-> ***O*** in Optimal productivity
-> ***b*** is backlog
+> Where ***p*** is Productivity, ***O*** is the Optimal (desired) productivity,
+> and ***b*** is backlog.
 
 In other words, the more tasks you keep on your mind and the longer you keep them
 there, the less productive you will become.
+
+You want to keep this stack empty.
 
 Install
 -------

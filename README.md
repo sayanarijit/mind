@@ -26,11 +26,11 @@ We need to execute them as early as possible. But one by one.
 
 [mind](https://github.com/sayanarijit/mind) makes it easy to work with the stack
 of your own mind. It uses this simple formula to measure the current productivity
-level of you mind and uses the appropriate colors to represent the it.
+level of our mind and uses the appropriate colors to represent the it.
 
 > ***p = O - b***
 >
-> Where ***p*** is Productivity, ***O*** is the Optimal (desired) productivity,
+> Where ***p*** is productivity, ***O*** is the optimal (desired) productivity,
 > and ***b*** is backlog.
 
 In other words, the more tasks you keep on your mind and the longer you keep them

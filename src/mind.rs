@@ -12,7 +12,7 @@ use termion::color;
 use termion::terminal_size;
 
 // Access it using Mind::version()
-static VERSION: &str = "0.4.4";
+static VERSION: &str = "0.5.2";
 
 /// The productive mind.
 #[derive(Default)]
@@ -128,7 +128,7 @@ impl Mind {
         let name = lines.next().expect("missing the task name");
         lines.next();
 
-        let details = lines.collect::<String>();
+        let details = lines.collect::<Vec<&str>>().join("\n");
         let details = details.trim();
 
         task.edit(

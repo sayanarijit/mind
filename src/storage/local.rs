@@ -1,4 +1,4 @@
-use crate::{Mind, Reminder, Storage, REMINDER_EXAMPLES};
+use crate::{Mind, Reminder, Storage};
 use dirs;
 use serde_yaml;
 use std::fs;
@@ -13,9 +13,6 @@ pub struct LocalStorage {
 
 impl Storage for LocalStorage {
     fn init() -> io::Result<Self> {
-        // Check if reminder template is OK
-        Reminder::examples();
-
         let local_storage = dirs::home_dir()
             .expect("failed go get home directory")
             .join(".mind");
@@ -39,7 +36,7 @@ impl Storage for LocalStorage {
 
         let reminder_examples_path = local_storage.join("reminder_examples.yml");
         let mut file = File::create(&reminder_examples_path)?;
-        file.write_all(REMINDER_EXAMPLES.as_bytes())?;
+        file.write_all(Reminder::examples().as_bytes())?;
 
         // TODO Add version compatibility logic
         let mind_version_path = local_storage.join("version");

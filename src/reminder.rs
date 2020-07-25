@@ -1,7 +1,8 @@
 use chrono::{DateTime, Datelike, Duration, Local, Weekday};
 use serde::{Deserialize, Serialize};
 
-pub static REMINDER_EXAMPLES: &str = r###"
+// Use Reminder::examples()
+static REMINDER_EXAMPLES: &str = r###"
 # This reminder will disappear once executed.
 
 - name: Test reminder once on 10 July 2020, at 8 am IST
@@ -127,10 +128,8 @@ impl Reminder {
         &self.repeat
     }
 
-    pub fn examples() -> Vec<Reminder> {
-        let reminders: Vec<Reminder> =
-            serde_yaml::from_str(REMINDER_EXAMPLES).expect("invalid reminders template");
-        reminders
+    pub fn examples() -> &'static str {
+        REMINDER_EXAMPLES
     }
 
     pub fn next(&self) -> Option<Self> {

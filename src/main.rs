@@ -5,6 +5,28 @@ use std::io::{self, BufRead, Write};
 use termion::screen::AlternateScreen;
 use atty;
 
+static HELP: &str = r###"
+mind - A productive mind
+
+ARGS:
+
+  --version                       Print the binary version
+  --help                          Print this help menu
+
+SUB COMMANDS:
+
+ Command       | Aliases   | Action
+---------------|-----------|------------------------------------------
+{num}          |           | Continue with the task at the given position
+pop            | p         | Pop out the current task
+pop {num}      | p {num}   | Pop out the task at the given position
+edit           | e         | Edit the current task
+edit {num}     | e {num}   | Edit the task at the given position
+edit reminders | e r       | Edit the reminders
+get            | g         | Get details of the current task
+get {num}      | g {num}   | Get details of the task at the given position
+"###;
+
 // TODO proper error handling
 fn run() -> io::Result<()> {
     let storage = LocalStorage::init()?;
@@ -17,25 +39,12 @@ fn run() -> io::Result<()> {
             println!("{}", Mind::version());
             std::process::exit(0);
         } else if args.get(0).unwrap() == "--help" {
-            println!("mind - A productive mind");
-            println!();
-            println!("ARGS:");
-            println!("  --version      \tPrint the binary version");
-            println!("  --help         \tPrint this help menu");
-            println!();
-            println!("SUB COMMANDS:");
-            println!("  {{num}}        \t\tContinue with the task at the given position");
-            println!("  pop            \t(alias: p) Pop out the current task");
-            println!("  pop {{num}}    \t\t(alias: p {{num}}) Pop out the task at the given position");
-            println!("  edit           \t(alias: e) Edit the current task");
-            println!("  edit {{num}}   \t\t(alias: e {{num}}) Edit the task at the given position");
-            println!("  get            \t(alias: g) Get details of the current task");
-            println!("  get {{num}}    \t\t(alias: g {{num}}) Get details of the task at the given position");
+            println!("{}", HELP);
             std::process::exit(0);
         } else if let Some(command) = Command::from(args.iter().map(|x| x.trim())) {
             mind.act(command);
         } else {
-            eprintln!("error: invalid sub command: {}", args.get(0).unwrap());
+            eprintln!("error: invalid sub command: {}", args.join(" "));
             std::process::exit(1);
         }
     } else if atty::is(atty::Stream::Stdout) {

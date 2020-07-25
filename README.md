@@ -79,15 +79,16 @@ Or while in interactive mode
 
 Supported commands in both CLI and interactive mode
 
-| Command         | Aliases     | Action
-|-----------------|-------------|------------------------------------------
-| `{num}`         |             | Continue with the task at the given position
-| `pop`           | `p`         | Pop out the current task
-| `pop {num}`     | `p {num}`   | Pop out the task at the given position
-| `edit`          | `e`         | Edit the current task
-| `edit {num}`    | `e {num}`   | Edit the task at the given position
-| `get`           | `g`         | Get details of the current task
-| `get {num}`     | `g {num}`   | Get details of the task at the given position
+ Command       | Aliases   | Action
+---------------|-----------|------------------------------------------
+{num}          |           | Continue with the task at the given position
+pop            | p         | Pop out the current task
+pop {num}      | p {num}   | Pop out the task at the given position
+edit           | e         | Edit the current task
+edit {num}     | e {num}   | Edit the task at the given position
+edit reminders | e r       | Edit the reminders
+get            | g         | Get details of the current task
+get {num}      | g {num}   | Get details of the task at the given position
 
 Examples
 --------
@@ -158,7 +159,19 @@ mind g 3
 A productive mind can remind itself of the pending and repeating tasks
 ----------------------------------------------------------------------
 
-Open `~/.mind/reminders.yml` and add the reminders in the given format (see `~/.mind/reminder_examples.yml`)
+```bash
+mind edit reminders
+
+# Or
+
+mind e r
+
+# Or in the interactive mode
+
+/e r
+```
+
+Add the reminders in the following format
 
 ```yaml
 # This reminder will disappear once executed.

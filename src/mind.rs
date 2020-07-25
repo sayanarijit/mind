@@ -3,16 +3,18 @@ use atty;
 use chrono::Duration;
 use chrono::Local;
 use chrono_humanize::HumanTime;
+use serde_yaml;
 use std::env;
 use std::fmt;
 use std::fs;
-use std::io::{self, Read, Write};
+use std::fs::File;
+use std::io::{self, BufReader, Read, Write};
 use std::process;
 use termion::color;
 use termion::terminal_size;
 
 // Access it using Mind::version()
-static VERSION: &str = "0.5.2";
+static VERSION: &str = "0.6.0";
 
 /// The productive mind.
 #[derive(Default)]
@@ -143,6 +145,36 @@ impl Mind {
         fs::remove_file(path)
     }
 
+    fn edit_reminders(&mut self) -> io::Result<()> {
+        let reminders = self.reminders();
+        let lines: Vec<String> = serde_yaml::to_string(reminders)
+            .expect("failed to encode reminders")
+            .lines()
+            .map(String::from)
+            .chain(["#", "# # Examples"].iter().map(|l| l.to_string()))
+            .chain(Reminder::examples().lines().map(|l| format!("# {}", l)))
+            .collect();
+
+        let path = env::temp_dir().join("___mind___tmp_reminders___.yml");
+        {
+            let mut file = fs::File::create(&path)?;
+            write!(file, "{}", lines.join("\n"))?;
+        }
+
+        process::Command::new(env::var("EDITOR").unwrap_or("vi".into()))
+            .arg(&path)
+            .status()
+            .expect("failed to open editor");
+
+        let mut contents = String::new();
+        fs::File::open(&path)?.read_to_string(&mut contents)?;
+
+        self.reminders =
+            serde_yaml::from_reader(BufReader::new(&File::open(&path)?)).expect("invalid format");
+
+        fs::remove_file(path)
+    }
+
     /// Act based on the given command.
     pub fn act(&mut self, command: Command) {
         self.focused = None;
@@ -192,6 +224,8 @@ impl Mind {
                     self.edit(self.tasks.len() - 1).expect("failed to edit");
                 }
             }
+
+            Command::EditReminders => self.edit_reminders().expect("failed to edit"),
         }
     }
 }

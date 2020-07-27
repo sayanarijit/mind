@@ -9,22 +9,20 @@ static HELP: &str = r###"
 mind - A productive mind
 
 ARGS:
-
   --version                       Print the binary version
   --help                          Print this help menu
 
 SUB COMMANDS:
-
- Command       | Aliases   | Action
----------------|-----------|------------------------------------------
-{num}          |           | Continue with the task at the given position
-pop            | p         | Pop out the current task
-pop {num}      | p {num}   | Pop out the task at the given position
-edit           | e         | Edit the current task
-edit {num}     | e {num}   | Edit the task at the given position
-edit reminders | e r       | Edit the reminders
-get            | g         | Get details of the current task
-get {num}      | g {num}   | Get details of the task at the given position
+   Command       | Aliases   | Action
+  ---------------|-----------|------------------------------------------
+  {num}          |           | Continue with the task at the given position
+  pop            | p         | Pop out the current task
+  pop {num}      | p {num}   | Pop out the task at the given position
+  edit           | e         | Edit the current task
+  edit {num}     | e {num}   | Edit the task at the given position
+  edit reminders | e r       | Edit the reminders
+  get            | g         | Get details of the current task
+  get {num}      | g {num}   | Get details of the task at the given position
 "###;
 
 // TODO proper error handling

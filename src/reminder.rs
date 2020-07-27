@@ -74,7 +74,7 @@ pub enum Repeat {
     EveryNthWeekday(NthWeekday),
 }
 impl Repeat {
-    pub fn when_next(&self, when_last: DateTime<Local>) -> Option<DateTime<Local>> {
+    fn when_next(&self, when_last: DateTime<Local>) -> Option<DateTime<Local>> {
         match self {
             Self::Never => None,
             Self::EveryDay => Some(when_last + Duration::days(1)),
@@ -105,6 +105,26 @@ impl Repeat {
             }
         }
     }
+
+    pub fn when_upcoming(
+        &self,
+        when_last: DateTime<Local>,
+        now: Option<DateTime<Local>>,
+    ) -> Option<DateTime<Local>> {
+        let now = now.unwrap_or_else(|| Local::now());
+
+        if let Some(when_next) = self.when_next(when_last) {
+            let mut when_next = when_next;
+
+            while when_next <= now {
+                when_next = self.when_next(when_next).unwrap();
+            }
+
+            return Some(when_next);
+        };
+
+        None
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -132,9 +152,9 @@ impl Reminder {
         REMINDER_EXAMPLES
     }
 
-    pub fn next(&self) -> Option<Self> {
+    pub fn upcoming(&self, now: Option<DateTime<Local>>) -> Option<Self> {
         self.repeat
-            .when_next(self.when.clone())
+            .when_upcoming(self.when, now)
             .map(|when| Self::new(self.name.clone(), when, self.repeat.clone()))
     }
 }

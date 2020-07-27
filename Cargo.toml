@@ -1,6 +1,6 @@
 [package]
 name = "mind"
-version = "0.6.0"  # Also update src/mind.rs
+version = "0.6.1"  # Also update src/mind.rs
 authors = ["Arijit Basu <sayanarijit@gmail.com>"]
 edition = "2018"
 description = "A productive mind has an empty stack"

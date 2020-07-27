@@ -14,7 +14,7 @@ use termion::color;
 use termion::terminal_size;
 
 // Access it using Mind::version()
-static VERSION: &str = "0.6.0";
+static VERSION: &str = "0.6.1";
 
 /// The productive mind.
 #[derive(Default)]
@@ -85,12 +85,8 @@ impl Mind {
             }
 
             self.push(format!("📆 {}", &reminder.name().clone()));
-            if let Some(next) = reminder.next() {
-                let mut next = next;
-                while next.when().clone() <= now {
-                    next = next.next().unwrap();
-                }
-                new_reminders.push(next);
+            if let Some(upcoming) = reminder.upcoming(Some(now)) {
+                new_reminders.push(upcoming);
             }
         }
         self.reminders = new_reminders;

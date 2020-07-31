@@ -3,7 +3,6 @@ use mind::{Command, Mind, Storage};
 use std::env;
 use std::io::{self, BufRead, Write};
 use termion::screen::AlternateScreen;
-use atty;
 
 static HELP: &str = r###"
 mind - A productive mind
@@ -32,7 +31,7 @@ fn run() -> io::Result<()> {
     mind.remind_tasks();
 
     let args: Vec<String> = env::args().skip(1).collect();
-    if args.len() > 0 {
+    if !args.is_empty() {
         if args.get(0).unwrap() == "--version" {
             println!("{}", Mind::version());
             std::process::exit(0);
@@ -65,11 +64,10 @@ fn run() -> io::Result<()> {
                 break;
             };
 
-            if input.chars().next() == Some('/') {
+            if input.starts_with('/') {
                 let statement = input
                     .splitn(2, '/')
-                    .skip(1)
-                    .next()
+                    .nth(1)
                     .expect("missing command")
                     .split(' ');
 

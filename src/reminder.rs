@@ -111,7 +111,7 @@ impl Repeat {
         when_last: DateTime<Local>,
         now: Option<DateTime<Local>>,
     ) -> Option<DateTime<Local>> {
-        let now = now.unwrap_or_else(|| Local::now());
+        let now = now.unwrap_or_else(Local::now);
 
         if let Some(when_next) = self.when_next(when_last) {
             let mut when_next = when_next;

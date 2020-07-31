@@ -1,9 +1,7 @@
 use crate::{Command, Productivity, Reminder, Task};
-use atty;
 use chrono::Duration;
 use chrono::Local;
 use chrono_humanize::HumanTime;
-use serde_yaml;
 use std::env;
 use std::fmt;
 use std::fs;
@@ -38,8 +36,7 @@ impl Mind {
             .tasks
             .iter()
             .zip(0..)
-            .filter(|(task, _idx)| task.name().trim() == name.trim())
-            .next()
+            .find(|(task, _idx)| task.name().trim() == name.trim())
         {
             let task = self.tasks.remove(idx);
             self.tasks.push(task);
@@ -69,7 +66,7 @@ impl Mind {
     /// Get the focused task
     pub fn focused(&self) -> Option<&Task> {
         self.focused
-            .map(|idx| self.tasks.get(idx).map(|t| Some(t)).unwrap_or(None))
+            .map(|idx| self.tasks.get(idx).map(Some).unwrap_or(None))
             .unwrap_or(None)
     }
 
@@ -115,7 +112,7 @@ impl Mind {
             write!(file, "{}", task)?;
         }
 
-        process::Command::new(env::var("EDITOR").unwrap_or("vi".into()))
+        process::Command::new(env::var("EDITOR").unwrap_or_else(|_| "vi".into()))
             .arg(&path)
             .status()
             .expect("failed to open editor");
@@ -157,7 +154,7 @@ impl Mind {
             write!(file, "{}", lines.join("\n"))?;
         }
 
-        process::Command::new(env::var("EDITOR").unwrap_or("vi".into()))
+        process::Command::new(env::var("EDITOR").unwrap_or_else(|_| "vi".into()))
             .arg(&path)
             .status()
             .expect("failed to open editor");
@@ -194,7 +191,7 @@ impl Mind {
             }
 
             Command::GetLast => {
-                if self.tasks.len() > 0 {
+                if !self.tasks.is_empty() {
                     self.focused = Some(self.tasks.len() - 1);
                 }
             }
@@ -216,7 +213,7 @@ impl Mind {
             }
 
             Command::EditLast => {
-                if self.tasks.len() > 0 {
+                if !self.tasks.is_empty() {
                     self.edit(self.tasks.len() - 1).expect("failed to edit");
                 }
             }

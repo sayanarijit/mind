@@ -35,7 +35,7 @@ impl<'a> Command {
                             .parse::<usize>()
                             .map_or(None, |num| Some(Self::Edit(num))),
                     })
-            },
+            }
 
             Some(arg) => arg
                 .parse::<usize>()

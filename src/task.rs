@@ -23,7 +23,7 @@ impl Task {
     }
 
     pub fn details(&self) -> &Option<String> {
-        return &self.details;
+        &self.details
     }
 
     pub fn start(&self) -> &DateTime<Local> {
@@ -41,7 +41,10 @@ impl fmt::Display for Task {
         let hr = iter::repeat("=")
             .take(self.name.chars().count())
             .collect::<String>();
-        let details = self.details.clone().unwrap_or("No details...".into());
+        let details = self
+            .details
+            .clone()
+            .unwrap_or_else(|| "No details...".into());
 
         writeln!(f, "{}", &self.name)?;
         writeln!(f, "{}", hr)?;

@@ -1,6 +1,4 @@
 use crate::{Mind, Reminder, Storage};
-use dirs;
-use serde_yaml;
 use std::fs;
 use std::fs::File;
 use std::io::{self, BufReader, Write};
@@ -56,8 +54,9 @@ impl Storage for LocalStorage {
             serde_yaml::from_reader(BufReader::new(&File::open(&self.mind_reminders_path)?))
                 .expect("invalid format"),
         );
-        return Ok(mind);
+        Ok(mind)
     }
+
     fn save(&self, mind: Mind) -> io::Result<()> {
         serde_yaml::to_writer(File::create(&self.mind_tasks_path)?, mind.tasks())
             .expect("failed to save file.");

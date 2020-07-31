@@ -1,12 +1,13 @@
 [package]
 name = "mind"
-version = "0.6.1"  # Also update src/mind.rs
+version = "0.6.2"  # Also update src/mind.rs
 authors = ["Arijit Basu <sayanarijit@gmail.com>"]
 edition = "2018"
 description = "A productive mind has an empty stack"
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/sayanarijit/mind"
+homepage = "https://mind.cli.rs"
 
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

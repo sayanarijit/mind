@@ -26,7 +26,7 @@ We need to execute them as early as possible. But one by one.
 
 [mind](https://github.com/sayanarijit/mind) makes it easy to work with the stack
 of our own mind. It uses this simple formula to measure the current productivity
-level of our mind and uses the appropriate colors to represent the it.
+level of our mind and uses the appropriate colors to represent the state.
 
 > ***p = O - b***
 >

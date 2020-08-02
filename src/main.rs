@@ -12,7 +12,7 @@ ARGS:
   --help                          Print this help menu
 
 SUB COMMANDS:
-   Command       | Aliases   | Action
+  Command        | Aliases   | Action
   ---------------|-----------|------------------------------------------
   {num}          |           | Continue with the task at the given position
   pop            | p         | Pop out the current task

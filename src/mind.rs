@@ -6,7 +6,7 @@ use std::env;
 use std::fmt;
 use std::fs;
 use std::fs::File;
-use std::io::{self, BufReader, Read, Write};
+use std::io::{self, Read, Write};
 use std::process;
 use termion::color;
 use termion::terminal_size;
@@ -83,10 +83,6 @@ impl Mind {
             }
 
             self.push(Task::from_reminder(&reminder));
-
-            if let Some(upcoming) = reminder.upcoming(Some(now)) {
-                new_reminders.push(upcoming);
-            }
         }
         self.reminders = new_reminders;
     }
@@ -141,6 +137,8 @@ impl Mind {
     }
 
     fn edit_reminders(&mut self) -> io::Result<()> {
+        // TODO: do the same for Task edit?
+
         let reminders = self.reminders();
         let lines: Vec<String> = serde_yaml::to_string(reminders)
             .expect("failed to encode reminders")
@@ -156,16 +154,57 @@ impl Mind {
             write!(file, "{}", lines.join("\n"))?;
         }
 
-        process::Command::new(env::var("EDITOR").unwrap_or_else(|_| "vi".into()))
-            .arg(&path)
-            .status()
-            .expect("failed to open editor");
+        loop {
+            process::Command::new(env::var("EDITOR").unwrap_or_else(|_| "vi".into()))
+                .arg(&path)
+                .status()
+                .expect("failed to open editor");
 
-        let mut contents = String::new();
-        fs::File::open(&path)?.read_to_string(&mut contents)?;
+            let mut file = File::open(&path)?;
+            let mut content = String::new();
+            file.read_to_string(&mut content)?;
 
-        self.reminders =
-            serde_yaml::from_reader(BufReader::new(&File::open(&path)?)).expect("invalid format");
+            if content.is_empty() {
+                break;
+            }
+
+            let probably_reminders = serde_yaml::from_str(content.trim());
+            match probably_reminders {
+                Ok(reminders) => {
+                    self.reminders = reminders;
+                    break;
+                }
+
+                Err(err) => {
+                    let updated_lines: Vec<String> = [
+                        "# There was an error in the previous attempt",
+                        "# ┌─────────────────────────────────────────",
+                        format!("{}", err)
+                            .lines()
+                            .map(|l| format!("# │ ERROR: {}", &l))
+                            .collect::<Vec<String>>()
+                            .join("\n")
+                            .trim(),
+                        "# └─────────────────────────────────────────",
+                        "# If you want to cancel or quit, just leave this file empty",
+                    ]
+                    .iter()
+                    .map(|l| l.to_string())
+                    .chain(
+                        content
+                            .lines()
+                            .map(String::from)
+                            .skip_while(|l| l.starts_with("# ")),
+                    )
+                    .collect();
+
+                    {
+                        let mut file = fs::File::create(&path)?;
+                        write!(file, "{}", updated_lines.join("\n"))?;
+                    }
+                }
+            };
+        }
 
         fs::remove_file(path)
     }

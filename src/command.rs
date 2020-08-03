@@ -8,6 +8,8 @@ pub enum Command {
     EditReminders,
     Get(usize),
     GetLast,
+    Remind(usize),
+    RemindLast,
 }
 
 impl<'a> Command {
@@ -24,6 +26,11 @@ impl<'a> Command {
             Some("p") | Some("pop") => statement.next().map_or(Some(Self::PopLast), |arg| {
                 arg.parse::<usize>()
                     .map_or(None, |num| Some(Self::Pop(num)))
+            }),
+
+            Some("r") | Some("remind") => statement.next().map_or(Some(Self::RemindLast), |arg| {
+                arg.parse::<usize>()
+                    .map_or(None, |num| Some(Self::Remind(num)))
             }),
 
             Some("e") | Some("edit") => {

@@ -22,6 +22,8 @@ SUB COMMANDS:
   edit reminders | e r       | Edit the reminders
   get            | g         | Get details of the current task
   get {num}      | g {num}   | Get details of the task at the given position
+  remind         | r         | Turn the current task into a reminder
+  remind {num}   | r {num}   | Turn the specified task into a reminder
 "###;
 
 // TODO proper error handling

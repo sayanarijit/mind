@@ -1,4 +1,4 @@
-use crate::{Command, Productivity, Reminder, Task};
+use crate::{Command, Productivity, Reminder, Repeat, Task};
 use chrono::Duration;
 use chrono::Local;
 use chrono_humanize::HumanTime;
@@ -31,19 +31,20 @@ impl Mind {
         }
     }
 
-    fn push(&mut self, name: String) {
+    fn push(&mut self, task: Task) {
         if let Some((_task, idx)) = self
             .tasks
             .iter()
             .zip(0..)
-            .find(|(task, _idx)| task.name().trim() == name.trim())
+            .find(|(t, _i)| t.name().trim() == task.name().trim())
         {
             let task = self.tasks.remove(idx);
             self.tasks.push(task);
         } else {
-            self.tasks.push(Task::new(name));
+            self.tasks.push(task);
         }
     }
+
     fn pop(&mut self) -> Option<Task> {
         self.tasks.pop()
     }
@@ -81,7 +82,8 @@ impl Mind {
                 continue;
             }
 
-            self.push(format!("📆 {}", &reminder.name().clone()));
+            self.push(Task::from_reminder(&reminder));
+
             if let Some(upcoming) = reminder.upcoming(Some(now)) {
                 new_reminders.push(upcoming);
             }
@@ -89,7 +91,7 @@ impl Mind {
         self.reminders = new_reminders;
     }
 
-    // Total backlog
+    /// Total backlog
     pub fn backlog(&self) -> Duration {
         let now = Local::now();
         self.tasks
@@ -98,7 +100,7 @@ impl Mind {
             .fold(Duration::zero(), |x, y| x + y)
     }
 
-    // Productivity from backlog
+    /// Productivity from backlog
     pub fn productivity(&self) -> Productivity {
         Productivity::from_backlog(self.backlog())
     }
@@ -168,13 +170,26 @@ impl Mind {
         fs::remove_file(path)
     }
 
+    /// Turn the specified task into a reminder
+    pub fn task_to_reminder(&mut self, index: usize) -> io::Result<()> {
+        let task = self.tasks.remove(index);
+        let reminder = Reminder::new(
+            task.name().clone(),
+            task.details().clone(),
+            Local::now(),
+            Repeat::Never,
+        );
+        self.reminders.insert(0, reminder);
+        self.edit_reminders()
+    }
+
     /// Act based on the given command.
     pub fn act(&mut self, command: Command) {
         self.focused = None;
 
         match command {
             Command::Push(name) => {
-                self.push(name);
+                self.push(Task::new(name));
             }
 
             Command::Continue(index) => {
@@ -215,6 +230,18 @@ impl Mind {
             Command::EditLast => {
                 if !self.tasks.is_empty() {
                     self.edit(self.tasks.len() - 1).expect("failed to edit");
+                }
+            }
+            Command::Remind(index) => {
+                if index < self.tasks.len() {
+                    self.task_to_reminder(index).expect("failed to edit");
+                }
+            }
+
+            Command::RemindLast => {
+                if !self.tasks.is_empty() {
+                    self.task_to_reminder(self.tasks.len() - 1)
+                        .expect("failed to edit");
                 }
             }
 

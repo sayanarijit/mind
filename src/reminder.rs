@@ -130,20 +130,39 @@ impl Repeat {
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Reminder {
     name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    details: Option<String>,
     when: DateTime<Local>,
     repeat: Repeat,
 }
 
 impl Reminder {
-    pub fn new(name: String, when: DateTime<Local>, repeat: Repeat) -> Self {
-        Self { name, when, repeat }
+    pub fn new(
+        name: String,
+        details: Option<String>,
+        when: DateTime<Local>,
+        repeat: Repeat,
+    ) -> Self {
+        Self {
+            name,
+            details,
+            when,
+            repeat,
+        }
     }
+
     pub fn name(&self) -> &String {
         &self.name
     }
+
+    pub fn details(&self) -> &Option<String> {
+        &self.details
+    }
+
     pub fn when(&self) -> &DateTime<Local> {
         &self.when
     }
+
     pub fn repeat(&self) -> &Repeat {
         &self.repeat
     }
@@ -153,8 +172,9 @@ impl Reminder {
     }
 
     pub fn upcoming(&self, now: Option<DateTime<Local>>) -> Option<Self> {
-        self.repeat
-            .when_upcoming(self.when, now)
-            .map(|when| Self::new(self.name.clone(), when, self.repeat.clone()))
+        self.repeat.when_upcoming(self.when, now).map(|when| {
+            let (name, details) = (self.name.clone(), self.details.clone());
+            Self::new(name, details, when, self.repeat.clone())
+        })
     }
 }

@@ -4,6 +4,7 @@ use std::env;
 use std::io::{self, BufRead, Write};
 use termion::screen::AlternateScreen;
 
+// Also update README.md
 static HELP: &str = r###"
 mind - A productive mind
 

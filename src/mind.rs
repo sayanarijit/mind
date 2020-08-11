@@ -12,7 +12,7 @@ use termion::color;
 use termion::terminal_size;
 
 // Access it using Mind::version()
-static VERSION: &str = "0.7.1";
+static VERSION: &str = "0.7.2";
 
 /// The productive mind.
 #[derive(Default)]
@@ -83,6 +83,10 @@ impl Mind {
             }
 
             self.push(Task::from_reminder(&reminder));
+
+            if let Some(upcoming) = reminder.upcoming(Some(now)) {
+                new_reminders.push(upcoming);
+            }
         }
         self.reminders = new_reminders;
     }
@@ -185,7 +189,7 @@ impl Mind {
                             .collect::<Vec<String>>()
                             .join("\n")
                             .trim(),
-                        "# └─────────────────────────────────────────",
+                        "# └────────────────────────────────────────────────────────",
                         "# If you want to cancel or quit, just leave this file empty",
                     ]
                     .iter()

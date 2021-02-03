@@ -18,5 +18,5 @@ serde = { version = "1.0", features = ["derive"] }
 serde_yaml = "0.8"
 dirs = "3.0"
 termion = "1.5"
-chrono-humanize = "0.1.1"
+chrono-humanize = "0.1.2"
 atty = "0.2.14"

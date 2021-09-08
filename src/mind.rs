@@ -295,7 +295,7 @@ impl Mind {
 
 impl fmt::Display for Mind {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let mut color = 155 as u8;
+        let mut color = 155u8;
         let len = self.tasks.len();
         let max_name_width = terminal_size().unwrap_or((100, 0)).0 as usize - 30;
 
@@ -356,7 +356,7 @@ impl fmt::Display for Mind {
                 writeln!(f)?
             }
 
-            color += 100 as u8 / len as u8;
+            color += 100u8 / len as u8;
         }
         Ok(())
     }

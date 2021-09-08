@@ -2,7 +2,6 @@ use crate::Reminder;
 use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 use std::fmt;
-use std::iter;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Task {
@@ -49,9 +48,8 @@ impl Task {
 
 impl fmt::Display for Task {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let hr = iter::repeat("=")
-            .take(self.name.chars().count())
-            .collect::<String>();
+        let hr: String = "=".repeat(self.name.chars().count());
+
         let details = self
             .details
             .clone()

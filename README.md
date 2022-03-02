@@ -1,3 +1,9 @@
+> **Announcement:** I'm halting/closing this project as this workflow doesn't work for me anymore.
+> 
+> The marketing guys / media are getting really good at their game and so, I need to develop a new, super secret, anti-destraction workflow which is beyond this dimension. I won't be posting about it, and definitely won't be making a public project implementing the workflow anytime soon.
+> 
+> Good luck people. Thanks for using mind.
+
 A productive mind has an empty stack
 ===================================
 

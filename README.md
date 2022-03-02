@@ -1,5 +1,3 @@
-> ***NOTE:** The scope of `mind` is going to broaden in [mind 0.8](https://github.com/sayanarijit/mind/issues/46). However, the design goal will stay the same and initial usage will mosty stay the same.*
-
 A productive mind has an empty stack
 ===================================
 

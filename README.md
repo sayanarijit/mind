@@ -1,4 +1,5 @@
 > **Announcement:** I'm back maintaining mind
+>
 > I halted maintaining this project for some time since I wasn't using it.
 > But I eventually started using it again with a somewhat different workflow.
 > I'm glad that the simple and minimalistic nature of this tool turned out to

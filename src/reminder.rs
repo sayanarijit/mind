@@ -133,6 +133,7 @@ pub struct Reminder {
     #[serde(skip_serializing_if = "Option::is_none")]
     details: Option<String>,
     when: DateTime<Local>,
+    #[serde(with = "serde_yaml::with::singleton_map_recursive")]
     repeat: Repeat,
 }
 

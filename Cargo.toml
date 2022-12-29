@@ -1,6 +1,6 @@
 [package]
 name = "mind"
-version = "0.7.3"  # Also update src/mind.rs
+version = "0.7.4"  # Also update src/mind.rs
 authors = ["Arijit Basu <sayanarijit@gmail.com>"]
 edition = "2018"
 description = "A productive mind has an empty stack"
@@ -15,8 +15,8 @@ homepage = "https://mind.cli.rs"
 [dependencies]
 chrono = { version = "0.4", features = ["serde"] }
 serde = { version = "1.0", features = ["derive"] }
-serde_yaml = "0.8"
+serde_yaml = "0.9"
 dirs = "4.0"
-termion = "1.5"
-chrono-humanize = "0.1.1"
+termion = "2.0"
+chrono-humanize = "0.2.2"
 atty = "0.2.14"

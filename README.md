@@ -1,29 +1,29 @@
-> **Announcement:** I'm halting/closing this project as this workflow doesn't work for me anymore.
-> 
-> The marketing guys / media are getting really good at their game and so, I need to develop a new, super secret, anti-destraction workflow which is beyond this dimension. I won't be posting about it, and definitely won't be making a public project implementing the workflow anytime soon.
-> 
-> Good luck people. Thanks for using mind.
+> **Announcement:** I'm back maintaining mind
+> I halted maintaining this project for some time since I wasn't using it.
+> But I eventually started using it again with a somewhat different workflow.
+> I'm glad that the simple and minimalistic nature of this tool turned out to
+> be suitable for multiple productivity workflows. So, I'll hardly be adding
+> more features to it. But improving the current features and apis could be
+> done.
 
-A productive mind has an empty stack
-===================================
+# A productive mind has an empty stack
 
 [![Crates.io](https://img.shields.io/crates/v/mind.svg)](https://crates.io/crates/mind)
 
 [![asciicast](https://asciinema.org/a/345440.svg)](https://asciinema.org/a/345440)
 
-The philosophy
---------------
+## The philosophy
 
 [mind](https://github.com/sayanarijit/mind) follows the following philosophy
 
-> ***A productive mind has an empty stack.***
+> **_A productive mind has an empty stack._**
 
 Explaination:
 
 Sometimes we have too much on our mind but neither the traditional check boxes, nor
 the kanban board works for us. This is because our mind executes the tasks in
-[LIFO](https://en.wikipedia.org/wiki/LIFO_(education)) approach like a
-[stack](https://en.wikipedia.org/wiki/Stack_(abstract_data_type)).
+[LIFO](<https://en.wikipedia.org/wiki/LIFO_(education)>) approach like a
+[stack](<https://en.wikipedia.org/wiki/Stack_(abstract_data_type)>).
 
 The longer we hold a task in the stack of our mind, the more productivity it will
 lose. Also, trying multitasking with this stack can cause unpredictable results.
@@ -34,18 +34,17 @@ We need to execute them as early as possible. But one by one.
 of our own mind. It uses this simple formula to measure the current productivity
 level of our mind and uses the appropriate colors to represent the state.
 
-> ***p = O - b***
+> **_p = O - b_**
 >
-> Where ***p*** is productivity, ***O*** is the optimal (desired) productivity,
-> and ***b*** is backlog.
+> Where **_p_** is productivity, **_O_** is the optimal (desired) productivity,
+> and **_b_** is backlog.
 
 In other words, the more tasks you keep on your mind and the longer you keep them
 there, the less productive you will become.
 
 You want to keep this stack empty.
 
-Install
--------
+## Install
 
 You need [cargo to install mind](https://www.rust-lang.org/tools/install).
 
@@ -53,8 +52,7 @@ You need [cargo to install mind](https://www.rust-lang.org/tools/install).
 cargo install mind
 ```
 
-A productive mind can push and pop tasks into it's stack efficiently
---------------------------------------------------------------------
+## A productive mind can push and pop tasks into it's stack efficiently
 
 Push tasks into the mind stack (or continue with an existing task)
 
@@ -85,21 +83,20 @@ Or while in interactive mode
 
 Supported commands in both CLI and interactive mode
 
- Command       | Aliases   | Action
----------------|-----------|------------------------------------------
-{num}          |           | Continue with the task at the given position
-pop            | p         | Pop out the current task
-pop {num}      | p {num}   | Pop out the task at the given position
-edit           | e         | Edit the current task
-edit {num}     | e {num}   | Edit the task at the given position
-edit reminders | e r       | Edit the reminders
-get            | g         | Get details of the current task
-get {num}      | g {num}   | Get details of the task at the given position
-remind         | r         | Turn the current task into a reminder
-remind {num}   | r {num}   | Turn the specified task into a reminder
+| Command        | Aliases | Action                                        |
+| -------------- | ------- | --------------------------------------------- |
+| {num}          |         | Continue with the task at the given position  |
+| pop            | p       | Pop out the current task                      |
+| pop {num}      | p {num} | Pop out the task at the given position        |
+| edit           | e       | Edit the current task                         |
+| edit {num}     | e {num} | Edit the task at the given position           |
+| edit reminders | e r     | Edit the reminders                            |
+| get            | g       | Get details of the current task               |
+| get {num}      | g {num} | Get details of the task at the given position |
+| remind         | r       | Turn the current task into a reminder         |
+| remind {num}   | r {num} | Turn the specified task into a reminder       |
 
-Examples
---------
+## Examples
 
 Example 1: Add all the `TODO` and `FIXME` items from the codebase.
 
@@ -110,13 +107,13 @@ grep -nR FIXME . | mind
 
 Example 2: Continue with the task positioned at `[3]`
 
-* CLI mode
+- CLI mode
 
 ```bash
 mind 3
 ```
 
-* Interactive mode
+- Interactive mode
 
 ```bash
 /3
@@ -124,13 +121,13 @@ mind 3
 
 Example 3: Pop the task positioned at `[3]`
 
-* CLI mode
+- CLI mode
 
 ```bash
 mind p 3
 ```
 
-* Interactive mode
+- Interactive mode
 
 ```bash
 /p 3
@@ -138,13 +135,13 @@ mind p 3
 
 Example 4: Edit the task positioned at `[3]`
 
-* CLI mode
+- CLI mode
 
 ```bash
 mind e 3
 ```
 
-* Interactive mode
+- Interactive mode
 
 ```bash
 /e 3
@@ -152,20 +149,19 @@ mind e 3
 
 Example 5: Get details of the task positioned at `[3]`
 
-* CLI mode
+- CLI mode
 
 ```bash
 mind g 3
 ```
 
-* Interactive mode
+- Interactive mode
 
 ```bash
 /g 3
 ```
 
-A productive mind can remind itself of the pending and repeating tasks
-----------------------------------------------------------------------
+## A productive mind can remind itself of the pending and repeating tasks
 
 ```bash
 mind edit reminders

@@ -2,7 +2,7 @@ use mind::storage::local::LocalStorage;
 use mind::{Command, Mind, Storage};
 use std::env;
 use std::io::{self, BufRead, Write};
-use termion::screen::AlternateScreen;
+use termion::screen::IntoAlternateScreen;
 
 // Also update README.md
 static HELP: &str = r###"
@@ -49,8 +49,7 @@ fn run() -> io::Result<()> {
         }
     } else if atty::is(atty::Stream::Stdout) {
         loop {
-            let stdout = std::io::stdout();
-            let mut stdout = AlternateScreen::from(stdout);
+            let mut stdout = std::io::stdout().into_alternate_screen()?;
             let stdin = io::stdin();
             let mut handle = stdin.lock();
 

@@ -12,7 +12,7 @@ use termion::color;
 use termion::terminal_size;
 
 // Access it using Mind::version()
-static VERSION: &str = "0.7.4";
+static VERSION: &str = env!("CARGO_PKG_VERSION");
 
 /// The productive mind.
 #[derive(Default)]

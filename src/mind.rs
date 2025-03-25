@@ -129,7 +129,7 @@ impl Mind {
         let details = details.trim();
 
         task.edit(
-            name.into(),
+            name.trim_start_matches("# ").trim().into(),
             if details.chars().count() > 0 {
                 Some(details.into())
             } else {

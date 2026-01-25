@@ -1,15 +1,4 @@
-> **Announcement:** I'm back maintaining mind
->
-> I halted maintaining this project for some time since I wasn't using it.
-> But I eventually started using it again with a somewhat different workflow.
-> I'm glad that the simple and minimalistic nature of this tool turned out to
-> be suitable for multiple productivity workflows. So, I'll hardly be adding
-> more features to it. But improving the current features and apis could be
-> done.
-
 # A productive mind has an empty stack
-
-[![Crates.io](https://img.shields.io/crates/v/mind.svg)](https://crates.io/crates/mind)
 
 [![asciicast](https://asciinema.org/a/345440.svg)](https://asciinema.org/a/345440)
 
@@ -44,14 +33,6 @@ In other words, the more tasks you keep on your mind and the longer you keep the
 there, the less productive you will become.
 
 You want to keep this stack empty.
-
-## Install
-
-You need [cargo to install mind](https://www.rust-lang.org/tools/install).
-
-```bash
-cargo install mind
-```
 
 ## A productive mind can push and pop tasks into it's stack efficiently
 
